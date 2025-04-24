@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		
+		<div th:replace="~{fragment :: styles}"></div>
+		
+		<title>飲食店詳細</title>
+	</head>
+	<body>
+		<div class="samuraitabelog-wrapper">
+			<!-- ヘッダー -->
+			<div th:replace="~{fragment :: header}"></div>
+			
+			<main>
+				<div class="container pt-5 pb-6 samuraitabelog-container">
+					<div class="row justify-content-center">
+						<div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
+							
+							<!-- パンくずリスト -->
+							<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+								<ol class="breadcrumb mb-0">
+									<li class="breadcrumb-item"><a th:href="@{/admin/restaurants}">飲食店一覧</a></li>
+									<li class="breadcrumb-item active" aria-current="page">飲食店詳細</li>
+								</ol>
+							</nav>
+							
+							<h1 class="mb-4 text-center" th:text="${restaurant.name}"></h1>
+							<div class="d-flex justify-content-end align-items-end mb-3">
+								<div>
+									<a th:href="@{/admin/restaurants/__${restaurant.id}__/edit}">編集</a>
+								</div>
+							</div>
+							
+							<div class="mb-3">
+								<img th:if="${restaurant.image}" th:src="@{/storage/__${restaurant.image}__}" class="w-100" alt="飲食店画像">
+								<img th:unless="${restaurant.image}" th:src="@{/images/noImage.png}" class="w-100" alt="NO IMAGE">								
+							</div>
+							
+							<div class="container mb-4">
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">ID</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.id}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">飲食店名</span>
+									</div>
+									<div class="col">
+										<span th:text="${restaurant.name}"></span>
+									</div>
+								</div>	
+									
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">説明</span>
+									</div>								
+									<div class="col">
+										<span class="samuraitabelog-pre-wrap" th:text="${restaurant.description}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">価格帯</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.priceRange}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">ランチの開店時間</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.lunchOpeningTime}?: '未設定'"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">ランチの閉店時間</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.lunchClosingTime?: '未設定'}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">ディナーの開店時間</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.dinnerOpeningTime?: '未設定'}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">ディナーの閉店時間</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.dinnerClosingTime?: '未設定'}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">郵便番号</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.postalCode}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">住所</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.address}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">電話番号</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.phoneNumber}"></span>
+									</div>
+								</div>
+								
+								<div class="row pb-2 mb-3 border-bottom">
+									<div class="col-4">
+										<span class="fw-bold">定休日</span>
+									</div>								
+									<div class="col">
+										<span th:text="${restaurant.closeDays}"></span>
+									</div>
+								</div>								
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+			
+			<!-- フッター -->
+			<div th:replace="~{fragment :: footer}"></div>
+		</div>
+		
+		<!-- Bootstrap -->
+		<div th:replace="~{fragment :: scripts}"></div>
+	</body>
+</html>

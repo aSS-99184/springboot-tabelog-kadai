@@ -97,8 +97,26 @@ footer {
 	border-color: #f77736 !important;
 }
 
+.samuraitabelog-pre-wrap {
+	white-space: pre-wrap;
+}
 
+.samuraitabelog-link-danger{
+	color: #f2594b;
+}
 
+.samuraitabelog-link-danger:hover{
+	color: #a63c3c;
+}
+
+.samuraitabelog-btn-danger:hover {
+	opacity: 0.8;
+}
+
+.samuraitabelog-btn-danger {
+	background-color: #f2594b !important;
+	transition: 0.1s;
+}
 
 @media screen and (min-width: 1400px) {
 	.samuraitabelog-container {

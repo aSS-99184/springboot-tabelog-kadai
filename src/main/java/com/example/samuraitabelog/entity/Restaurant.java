@@ -29,7 +29,7 @@ public class Restaurant {
 	private String image;
 	
 	@Column(name = "description")
-	private String descripsion;
+	private String description;
 	
 	@Column(name = "price_range")
 	private String priceRange;
