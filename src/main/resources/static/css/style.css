@@ -60,7 +60,7 @@ footer {
 }
 
 .samuraitabelog-logo {
-	height: 50px;
+	height: 40px;
 	width:auto;
 	margin: 0;
 	padding: 0;
@@ -68,7 +68,7 @@ footer {
 
 @media (max-width: 767px) {
 	.samuraitabelog-logo {
-		height: 50px;
+		height: 30px;
 		width: auto;
 		margin: 0;
 		padding: 0;
@@ -116,6 +116,10 @@ footer {
 .samuraitabelog-btn-danger {
 	background-color: #f2594b !important;
 	transition: 0.1s;
+}
+
+.samuraitabelog-dropdown-item:active {
+  background-color: #e69045;
 }
 
 @media screen and (min-width: 1400px) {
