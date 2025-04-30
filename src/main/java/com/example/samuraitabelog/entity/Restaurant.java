@@ -61,7 +61,7 @@ public class Restaurant {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 	
-	@Column(name = "update_at")
+	@Column(name = "update_at" )
 	private LocalDateTime updateAt;
 	
 	@PrePersist

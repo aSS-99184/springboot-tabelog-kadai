@@ -75,5 +75,7 @@ INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code,
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (8, '侍 安民', 'サムライ ヤスタミ', 'yasutami.samurai@example.com', 'password', '241-0033', '神奈川県横浜市旭区今川町X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (9, '侍 章緒', 'サムライ アキオ', 'akio.samurai@example.com', 'password', '739-2103', '広島県東広島市高屋町宮領X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (10, '侍 祐子', 'サムライ ユウコ', 'yuko.samurai@example.com', 'password', '601-0761', '京都府南丹市美山町高野X-XX-XX', '090-1234-5678', 1, false);
-INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (11, '侍 秋美', 'サムライ アキミ', 'akimi.samurai@example.com', '606-8235', '京都府京都市左京区田中西春菜町X-XX-XX', '090-1234-5678', 'password', 1, false);
+INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (11, '侍 秋美', 'サムライ アキミ', 'akimi.samurai@example.com', 'password', '606-8235', '京都府京都市左京区田中西春菜町X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (12, '侍 信平', 'サムライ シンペイ', 'shinpei.samurai@example.com', 'password', '673-1324', '兵庫県加東市新定X-XX-XX', '090-1234-5678', 1, false);
+
+-- 
