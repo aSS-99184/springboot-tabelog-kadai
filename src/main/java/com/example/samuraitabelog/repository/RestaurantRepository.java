@@ -8,5 +8,6 @@ import com.example.samuraitabelog.entity.Restaurant;
 
 public interface RestaurantRepository extends  JpaRepository<Restaurant, Integer>{
 	public Page<Restaurant> findByNameLike(String keyword, Pageable pageable);
+	
 
 }
