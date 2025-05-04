@@ -64,9 +64,13 @@ public class Restaurant {
 	@Column(name = "update_at" )
 	private LocalDateTime updateAt;
 	
+	// 今回は新着順表示で要る
+	// Java側で日時を制御(後でロジック入れれるかも)
 	@PrePersist
 	private void prepersist() {
+		// 登録時の日時
 		this.createdAt = LocalDateTime.now();
+		// 登録時に最終更新日もいれる
 		this.updateAt = LocalDateTime.now();
 	}
 	

@@ -28,7 +28,6 @@ import com.example.samuraitabelog.service.UserService;
 import com.example.samuraitabelog.service.VerificationTokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -167,9 +166,10 @@ public class AuthController {
     }
     
     // パスワード再設定を実際に処理する
-
     @PostMapping("/password/password_reset")
-    public String handlePasswordResetByToken(@Valid @ModelAttribute PasswordEditForm passwordEditForm, BindingResult bindingResult,  @RequestParam("token") String token, RedirectAttributes redirectAttributes, Model model) {
+    public String handlePasswordResetByToken(@ModelAttribute @Validated PasswordEditForm passwordEditForm, BindingResult bindingResult, 
+    										@RequestParam("token") String token, RedirectAttributes redirectAttributes,
+    										Model model) {
     	
     	// 万が一トークンが無効な場合の時のエラー表示
     	PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
@@ -199,7 +199,6 @@ public class AuthController {
     	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。ログインしてください。");
     	return "redirect:/auth/login";
     }
-    
    
 }
 

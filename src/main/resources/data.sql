@@ -78,4 +78,47 @@ INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code,
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (11, '侍 秋美', 'サムライ アキミ', 'akimi.samurai@example.com', 'password', '606-8235', '京都府京都市左京区田中西春菜町X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (12, '侍 信平', 'サムライ シンペイ', 'shinpei.samurai@example.com', 'password', '673-1324', '兵庫県加東市新定X-XX-XX', '090-1234-5678', 1, false);
 
--- 
+-- reservationsテーブル
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (1, 1, 1, '2025-05-01 12:30:00', 1);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (2, 2, 1, '2025-05-01 12:30:00', 2);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (3, 3, 1, '2025-05-01 12:30:00', 3);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (4, 4, 1, '2025-05-01 12:30:00', 1);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (5, 5, 1, '2025-05-01 12:30:00', 2);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (6, 6, 1, '2025-05-01 12:30:00', 3);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (7, 7, 1, '2025-05-01 12:30:00', 1);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (8, 8, 1, '2025-05-01 12:30:00', 2);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (9, 9, 1, '2025-05-01 12:30:00', 3);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (10, 10, 1, '2025-05-01 12:30:00', 1);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (11, 11, 1, '2025-05-01 12:30:00', 2);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (12, 12, 1, '2025-05-01 12:30:00', 3);
+INSERT IGNORE INTO reservations (reservation_id, restaurant_id, user_id, reserved_datetime, guest_count) VALUES (13, 13, 1, '2025-05-01 12:30:00', 1);
+
+-- reviewsテーブル
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (1, 1, 1, 5, '大変おいしかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (2, 1, 2, 4, '接客が素敵でした。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (3, 1, 3, 4, 'メニューが豊富でよかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (4, 1, 4, 5, '大変おいしかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (5, 1, 5, 4, '接客が素敵でした。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (6, 1, 6, 5, 'メニューが豊富でよかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (7, 1, 7, 4, '大変おいしかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (8, 1, 8, 3, '接客が素敵でした。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (9, 1, 9, 4, 'メニューが豊富でよかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (10, 1, 10, 5, '大変おいしかったです。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (11, 1, 11, 4, '接客が素敵でした。');
+INSERT IGNORE INTO reviews (review_id, restaurant_id, user_id, score, content) VALUES (12, 1, 12, 5, 'メニューが豊富でよかったです。');
+
+
+-- favoritesテーブル
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (1, 1, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (2, 2, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (3, 3, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (4, 4, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (5, 5, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (6, 6, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (7, 7, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (8, 8, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (9, 9, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (10, 10, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (11, 11, 1);
+INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (12, 12, 1);
+

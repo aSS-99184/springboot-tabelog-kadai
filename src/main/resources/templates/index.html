@@ -22,6 +22,52 @@
 					 <div th:if="${successMessage}" class="alert alert-info">
                         <span th:text="${successMessage}"></span>
                     </div> 
+                    
+                    <!-- 検索 -->
+                    <div class="d-flex justify-content-center">
+						<form method="get" th:action="@{/restaurants}" class="mb-5 samuraitabelog-search-form">
+							<div class="input-group">
+                                <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・カテゴリ">
+                                <button type="submit" class="btn text-white shadow-sm samuraitabelog-btn">検索</button> 
+                            </div>
+						</form>
+					</div>
+					
+					<h2 class="text-center mb-3">新着</h2>
+                    <div class="row row-cols-lg-5 row-cols-2 g-3 mb-5">                                        
+                        <div class="col" th:each="newRestaurant : ${newRestaurants}">
+                            <a th:href="@{/restaurants/__${newRestaurant.id}__}" class="link-dark text-decoration-none samuraitabelog-card-link">
+                                <div class="card h-100">                                                                        
+                                    <img th:if="${newRestaurant.image}" th:src="@{/storage/__${newRestaurant.image}__}" class="card-img-top samuraitabelog-vertical-card-image" alt="店舗画像">                                     
+                                    <img th:unless="${newRestaurant.image}" th:src="@{/images/noImage.png}" class="card-img-top samuraitabelog-vertical-card-image" alt="NO IMAGE">                                                                                                                        
+                                    <div class="card-body">                                    
+                                        <h3 class="card-title mb-3" th:text="${newRestaurant.name}"></h3>
+                                        <p class="card-text mb-2">
+                                            <span th:text="${newRestaurant.description}"></span>                                            
+                                        </p>
+										<p class="card-text mb-2">
+                                        	<small class="text-muted" th:text="${'〒' + newRestaurant.postalCode}"></small>
+                                            <small class="text-muted" th:text="${newRestaurant.address}"></small>                                                      
+                                        </p>
+                                                                                                                                                                                                                                  
+                                        <p class="card-text">
+                                            <span th:text="${newRestaurant.priceRange}"></span>
+                                        </p>
+                                        <p class="card-text">
+                                            <span th:text="${newRestaurant.closeDays}"></span>
+                                        </p>                                                                           
+                                    </div>
+                                </div>
+                            </a>            
+                        </div>                                               
+                    </div>
+                    
+                    <!-- カテゴリから探す -->
+                    <div class="row justify-content-center">
+						<div class="col-xl-5 col-lg-6 col-md-8">
+							<h2 class="text-center mb-3">カテゴリから探す</h2>
+						</div>
+					</div>
 					
 				</div>
 			</main>

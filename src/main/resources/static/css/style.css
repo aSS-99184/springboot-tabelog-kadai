@@ -10,6 +10,14 @@ h1 {
 	font-size: 1.5rem;
 }
 
+h2 {
+  font-size: 1.475rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
 a {
 	color: #e69045;
 }
@@ -120,6 +128,31 @@ footer {
 
 .samuraitabelog-dropdown-item:active {
   background-color: #e69045;
+}
+
+.samuraitabelog-card-link {
+  transition: 0.3s;
+}
+
+.samuraitabelog-card-link:hover {
+  opacity: 0.7;
+}
+
+.samuraitabelog-horizontal-card-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+/*トップページ*/
+.samuraitabelog-vertical-card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.samuraitabelog-search-form {
+    max-width: 300px;
 }
 
 @media screen and (min-width: 1400px) {

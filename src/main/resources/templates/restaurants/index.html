@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>   
+        
+        <div th:replace="~{fragment :: styles}"></div>
+        
+        <title>飲食店一覧</title>
+    </head>
+    <body>
+		<div class="samuraitabelog-wrapper">
+			<!-- ヘッダー -->
+			<div th:replace="~{fragment :: header}"></div>
+			<main>
+				<div class="container samuraitabelog-container pb-5">
+					<div class="row justify-content-center">
+						<nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0">
+								<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">飲食店一覧</li>
+                            </ol>
+                        </nav>         
+           
+                        <div class="col-xl-3 col-lg-4 col-md-12">               
+                            <form method="get" th:action="@{/restaurants}" class="w-100 mb-3">
+								<div class="input-group">
+									<input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・カテゴリ">
+                                    <button type="submit" class="btn text-white shadow-sm samuraitabelog-btn">検索</button> 
+                                </div>               
+                            </form>
+                            	<div class="card mb-3">
+									<div class="card-header">
+										カテゴリから探す
+	                               	</div>
+	                               	<div class="card-body">
+	                                   	<form method="get" th:action="@{/restaurants}" class="w-100">
+	                                       	<div class="form-group mb-3">
+	                                           	<select class="form-control form-select" name="category">  
+	                                               	<option value="" hidden>選択してください</option>                                       
+	                                                   	<option value="和食" th:selected="${category == '和食'}">和食</option>                                           
+	                                                   	<option value="うなぎ" th:selected="${category == 'うなぎ'}">うなぎ</option>                                                
+	                                                   	<option value="麺類" th:selected="${category == '麺類'}">麺類</option>
+	                                                   	<option value="やきとり" th:selected="${category == 'やきとり'}">やきとり</option>
+	                                                   	<option value="カフェ" th:selected="${category == 'カフェ'}">カフェ</option>
+	                                                   	<option value="おでん" th:selected="${category == 'おでん'}">おでん</option>
+	                                                  	<option value="やきとり" th:selected="${category == 'やきとり'}">やきとり</option>
+	                                                  	<option value="洋食" th:selected="${category == '洋食'}">洋食</option>
+	                                                   	<option value="アジア料理" th:selected="${category == 'アジア料理'}">アジア料理</option>
+	                                                   	<option value="フレンチ" th:selected="${category == 'フレンチ'}">フレンチ</option>
+	                                                   	<option value="イタリアン" th:selected="${category == 'イタリアン'}">イタリアン</option>
+	                                                   	<option value="バー" th:selected="${category == 'バー'}">バー</option>                                      		                                                   	                                                                                      
+	                                           	</select> 
+	                                       	</div>                                      
+	                                       	<div class="form-group">
+	                                           	<button type="submit" class="btn text-white shadow-sm w-100 samuraitabelog-btn">検索</button>
+	                                       	</div>                                           
+	                                   	</form>                                  
+	                              	 </div>
+	                              </div>                               
+	                          </div>
+	                          
+	                      <div class="col">                                                                          
+                          <div class="d-flex justify-content-between flex-wrap">
+							  <p th:if="${restaurantPage.getTotalPages() > 1}" class="fs-5 mb-3" th:text="${'検索結果：' + restaurantPage.getTotalElements() + '件' + '（' + (restaurantPage.number + 1) + ' / ' + restaurantPage.getTotalPages() + ' ページ）'}"></p> 
+                              <p th:unless="${restaurantPage.getTotalPages() > 1}" class="fs-5 mb-3" th:text="${'検索結果：' + restaurantPage.getTotalElements() + '件'}"></p>                                 
+                          </div>   
+                                                                       
+                          <div class="mb-3" th:each="restaurant : ${restaurantPage}">
+                               <a th:href="@{/restaurants/__${restaurant.id}__}" class="link-dark samuraitabelog-card-link">
+                                   <div class="card h-100">   
+                                       <div class="row g-0">
+                                           <div class="col-md-4">                                                                                
+                                               <img th:if="${restaurant.image}" th:src="@{/storage/__${restaurant.image}__}" class="card-img-top samuraitabelog-horizontal-card-image" alt="店舗画像">                                                     
+                                               <img th:unless="${restaurant.image}" th:src="@{/images/noImage.png}" class="card-img-top samuraitabelog-horizontal-card-image" alt="NO IMAGE">                                                    
+                                           </div> 
+                                           <div class="col-md-8">                                                                                                                        
+                                               <div class="card-body">                                    
+                                                   <h3 class="card-title mb-3" th:text="${restaurant.name}"></h3>                                            
+
+                                                   <hr class="mb-3">
+                                                   
+                                                   <p class="card-text mb-2">
+                                                       <span th:text="${restaurant.description}"></span>
+                                                   </p>                                                    
+                                                   
+                                                   <p class="card-text mb-2">
+                                                       <small class="text-muted" th:text="${'〒' + restaurant.postalCode}"></small>
+                                                       <small class="text-muted" th:text="${restaurant.address}"></small>                                                      
+                                                   </p>   
+                                                                                                                                                                                                                                  
+                                                   <p class="card-text">
+                                                       <span th:text="${restaurant.priceRange}"></span>
+                                                   </p>
+                                                   <p class="card-text">
+                                                       <span th:text="${restaurant.closeDays}"></span>
+                                                   </p>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>    
+                               </a>            
+                           </div>                                                                                       
+           
+                           <!-- ページネーション -->
+                           <div th:if="${restaurantPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+                               <nav aria-label="飲食店一覧ページ">
+                                   <ul class="pagination">
+                                       <li class="page-item">
+                                           <span th:if="${restaurantPage.isFirst()}" class="page-link disabled">前</span>
+                                           <a th:unless="${restaurantPage.isFirst()}" th:href="@{/restaurants(page = ${restaurantPage.number - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
+                                       </li>
+                                       <li th:each="i : ${#numbers.sequence(0, restaurantPage.getTotalPages() - 1)}" class="page-item">
+                                           <span th:if="${i == restaurantPage.number}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
+                                           <a th:unless="${i == restaurantPage.number}" th:href="@{/restaurants(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
+                                       </li>
+                                       <li class="page-item">                        
+                                           <span th:if="${restaurantPage.isLast()}" class="page-link disabled">次</span>
+                                           <a th:unless="${restaurantPage.isLast()}" th:href="@{/restaurants(page = ${restaurantPage.number + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
+                                       </li>
+                                   </ul>
+                               </nav> 
+                           </div>                                      
+                       </div>
+                   </div>
+               </div>  
+           </main>
+           
+           <!-- フッター -->
+           <div th:replace="~{fragment :: footer}"></div>
+       </div>    
+       
+       <div th:replace="~{fragment :: scripts}"></div>  
+       </body>
+</html>

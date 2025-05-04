@@ -18,6 +18,19 @@
 						<div class="col-xl-3 col-lg-4 col-md-5 col-sm-7">
 							<h1 class="mb-4 text-center">ログイン</h1>
 							
+							<div class="row mb-1">
+                                <p class="text-danger">
+                                    動作確認用ユーザーアカウント<br>
+                                    メールアドレス：taro.samurai@example.com<br>
+                                    パスワード：password
+                                </p>
+                                <p class="text-danger">
+                                    動作確認用管理アカウント<br>
+                                    メールアドレス：hanako.samurai@example.com<br>
+                                    パスワード：password
+                                </p>
+                            </div>
+							
 							<div th:if="${successMessage}" class="alert alert-success">
     							<p th:text="${successMessage}"></p>
 							</div>
