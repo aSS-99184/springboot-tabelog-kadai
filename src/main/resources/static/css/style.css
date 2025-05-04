@@ -155,6 +155,15 @@ footer {
     max-width: 300px;
 }
 
+/*星評価*/
+.samuraitabelog-star {
+	color: #ffa500;
+}
+
+.samuraitabelog-star:focus {
+	color: #ffa500;
+}
+
 @media screen and (min-width: 1400px) {
 	.samuraitabelog-container {
 		max-width: 1200px;

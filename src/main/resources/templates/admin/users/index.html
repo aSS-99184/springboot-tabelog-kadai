@@ -44,8 +44,8 @@
                                </thead>   
                                <tbody>                                                     
                                    <tr th:each="user : ${userPage}">
-                                       <td th:text="${user.getId()}"></td>
-                                       <td th:text="${user.getName()}"></td>
+                                       <td th:text="${user.id}"></td>
+                                       <td th:text="${user.name}"></td>
                                        <td th:text="${user.getFurigana()}"></td>
                                        <td th:text="${user.getEmail()}"></td>
                                        <td><a th:href="@{/admin/users/__${user.id}__}">詳細</a></td>                                                                                

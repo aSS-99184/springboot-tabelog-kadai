@@ -87,15 +87,15 @@
 										<li class="page-item">
 											<span th:if="${restaurantPage.isFirst()}" class="page-link disabled">前</span>
 											<!-- 検索キーワードをページ移動のときも引き継ぐ -->
-											<a th:unless="${restaurantPage.isFirst()}" th:href="@{/admin/restaurants(page = ${restaurantPage.getNumber() - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
+											<a th:unless="${restaurantPage.isFirst()}" th:href="@{/admin/restaurants(page = ${restaurantPage.number - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
 										</li>
 										<li th:each="i : ${#numbers.sequence(0, restaurantPage.getTotalPages() - 1)}" class="page-item">
-											<span th:if="${i == restaurantPage.getNumber()}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
-											<a th:unless="${i == restaurantPage.getNumber()}" th:href="@{/admin/restaurants(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
+											<span th:if="${i == restaurantPage.number}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
+											<a th:unless="${i == restaurantPage.number}" th:href="@{/admin/restaurants(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
 										</li>
 										<li class="page-item">
 											<span th:if="${restaurantPage.isLast()}" class="page-link disabled">次</span>
-											<a th:unless="${restaurantPage.isLast()}" th:href="@{/admin/restaurants(page = ${restaurantPage.getNumber() + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
+											<a th:unless="${restaurantPage.isLast()}" th:href="@{/admin/restaurants(page = ${restaurantPage.number + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
 										</li>
 									</ul>
 								</nav>	

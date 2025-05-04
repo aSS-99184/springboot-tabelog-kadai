@@ -14,13 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.samuraitabelog.entity.Favorite;
 import com.example.samuraitabelog.entity.Restaurant;
 import com.example.samuraitabelog.entity.Review;
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.form.ReservationInputForm;
+import com.example.samuraitabelog.repository.FavoriteRepository;
 import com.example.samuraitabelog.repository.RestaurantRepository;
 import com.example.samuraitabelog.repository.ReviewRepository;
 import com.example.samuraitabelog.security.UserDetailsImpl;
+import com.example.samuraitabelog.service.FavoriteService;
 import com.example.samuraitabelog.service.ReviewService;
 
 @Controller
@@ -29,11 +32,15 @@ public class RestaurantController {
 	private final RestaurantRepository restaurantRepository;
 	private final ReviewRepository reviewRepository;
 	private final ReviewService reviewService;
+	private final FavoriteRepository favoriteRepository; 
+    private final FavoriteService favoriteService;
 	
-	public RestaurantController(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, ReviewService reviewService) {
+	public RestaurantController(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, ReviewService reviewService, FavoriteRepository favoriteRepository,FavoriteService favoriteService) {
 		this.restaurantRepository = restaurantRepository;
 		this.reviewRepository = reviewRepository;
 		this.reviewService = reviewService;
+		this.favoriteRepository = favoriteRepository;
+        this.favoriteService = favoriteService;
 	}
 	
 	// 店舗名で検索
@@ -60,15 +67,25 @@ public class RestaurantController {
 	 	// @PathVariable アノテーションでURLのパスから id を取得して、メソッドの引数に渡す。
 	    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 		 Restaurant restaurant = restaurantRepository.getReferenceById(id);
-	    // デフォルトとして「ユーザーはまだその飲食店にレビューしていない」
-		boolean hasUserAlreadyReviewed = false;  
+		// お気に入り登録がまだない状態でもエラーが出ないようにする
+		 Favorite favorite = null;
+	    // デフォルトが「ユーザーはまだその飲食店にレビューしていない」
+		boolean hasUserAlreadyReviewed = false;
+		//デフォルトが「まだお気に入り登録されていない状態」
+		boolean isFavorite = false;
 		
 		// ユーザーがログインしていれば
 		if (userDetailsImpl != null) {
 			// ログイン中のユーザー情報を取り出す
             User user = userDetailsImpl.getUser();
-         // そのユーザーがすでにこの店舗にレビューしたかどうかをチェック
-            hasUserAlreadyReviewed = reviewService.hasUserAlreadyReviewed(restaurant, user);           
+            // そのユーザーがすでにこの店舗にレビューしたかどうかをチェック
+            hasUserAlreadyReviewed = reviewService.hasUserAlreadyReviewed(restaurant, user); 
+            
+            // そのユーザーがすでにその店舗をお気に入り登録しているなら情報を取り出して、favoriteに保存する。
+            isFavorite = favoriteService.isFavorite(restaurant, user);
+            if (isFavorite) {
+                favorite = favoriteRepository.findByRestaurantAndUser(restaurant, user);
+            } 
         }
         
         List<Review> newReviews = reviewRepository.findTop6ByRestaurantOrderByCreatedAtDesc(restaurant);        
@@ -79,6 +96,8 @@ public class RestaurantController {
 	        model.addAttribute("hasUserAlreadyReviewed", hasUserAlreadyReviewed);
 	        model.addAttribute("newReviews", newReviews);        
 	        model.addAttribute("totalReviewCount", totalReviewCount);
+	        model.addAttribute("favorite", favorite);
+	        model.addAttribute("isFavorite", isFavorite); 
 	        
 	        return "restaurants/show";
 	    }

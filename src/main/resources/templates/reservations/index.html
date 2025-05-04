@@ -42,9 +42,9 @@
 								<tbody>
 									<tr th:each="reservation : ${reservationPage}">
 										<td>
-											<a th:href="@{/restaurants/__${reservation.getRestaurant().getId()}__}" th:text="${reservation.getRestaurant().getName()}"></a>
+											<a th:href="@{/restaurants/__${reservation.restaurant.id}__}" th:text="${reservation.restaurant.name}"></a>
 										</td>
-										<td th:text="${reservation.reservedDatetime}"></td>
+										<td th:text="${#temporals.format(reservation.reservedDatetime, 'yyyy年M月d日 HH:mm')}"></td>
 										<td th:text="${reservation.guestCount + '名'}"></td>								
 									</tr>
 								</tbody>
@@ -57,15 +57,15 @@
 										<li class="page-item">
 											<span th:if="${reservationPage.isFirst()}" class="page-link disabled">前</span>
 											<!-- 検索キーワードをページ移動のときも引き継ぐ -->
-											<a th:unless="${reservationPage.isFirst()}" th:href="@{/reservations(page = ${reservationPage.getNumber() - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
+											<a th:unless="${reservationPage.isFirst()}" th:href="@{/reservations(page = ${reservationPage.number - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
 										</li>
 										<li th:each="i : ${#numbers.sequence(0, reservationPage.getTotalPages() - 1)}" class="page-item">
-											<span th:if="${i == reservationPage.getNumber()}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
-											<a th:unless="${i == reservationPage.getNumber()}" th:href="@{/reservations(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
+											<span th:if="${i == reservationPage.number}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
+											<a th:unless="${i == reservationPage.number}" th:href="@{/reservations(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
 										</li>
 										<li class="page-item">
 											<span th:if="${reservationPage.isLast()}" class="page-link disabled">次</span>
-											<a th:unless="${reservationPage.isLast()}" th:href="@{/reservations(page = ${reservationPage.getNumber() + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
+											<a th:unless="${reservationPage.isLast()}" th:href="@{/reservations(page = ${reservationPage.number + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
 										</li>
 									</ul>
 								</nav>	
