@@ -167,9 +167,9 @@ public class AuthController {
     
     // パスワード再設定を実際に処理する
     @PostMapping("/password/password_reset")
-    public String handlePasswordResetByToken(@ModelAttribute @Validated PasswordEditForm passwordEditForm, BindingResult bindingResult, 
-    										@RequestParam("token") String token, RedirectAttributes redirectAttributes,
-    										Model model) {
+    public String handlePasswordResetByToken(@ModelAttribute @Validated PasswordEditForm passwordEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    	
+    	String token = passwordEditForm.getToken();
     	
     	// 万が一トークンが無効な場合の時のエラー表示
     	PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
@@ -178,13 +178,14 @@ public class AuthController {
     		return "redirect:/password/password_reset_request";
     	}
     	
+    	
+    	
     	// 入力パスワードと確認パスワードが一致していなければエラー
     	if (!passwordEditForm.getPassword().equals(passwordEditForm.getPasswordConfirm())) {
     		bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "パスワードが一致しません。再度入力してください。");
     	}
     	
     	if (bindingResult.hasErrors()) {
-    		model.addAttribute("token", token);
     		return "password/password_reset";
     	}
     	

@@ -17,4 +17,6 @@ public class PasswordEditForm {
 	@NotBlank(message = "確認用パスワードを入力してください。")
 	@Length(min = 8, message = "パスワードは8文字以上で入力してください。")
 	private String passwordConfirm;
+	
+	private String token;
 }
