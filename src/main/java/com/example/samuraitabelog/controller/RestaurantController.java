@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.samuraitabelog.entity.Category;
 import com.example.samuraitabelog.entity.Favorite;
 import com.example.samuraitabelog.entity.Restaurant;
 import com.example.samuraitabelog.entity.Review;
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.form.ReservationInputForm;
+import com.example.samuraitabelog.repository.CategoryRepository;
 import com.example.samuraitabelog.repository.FavoriteRepository;
 import com.example.samuraitabelog.repository.RestaurantRepository;
 import com.example.samuraitabelog.repository.ReviewRepository;
@@ -34,30 +36,36 @@ public class RestaurantController {
 	private final ReviewService reviewService;
 	private final FavoriteRepository favoriteRepository; 
     private final FavoriteService favoriteService;
+    private final CategoryRepository categoryRepository;
 	
-	public RestaurantController(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, ReviewService reviewService, FavoriteRepository favoriteRepository,FavoriteService favoriteService) {
+	public RestaurantController(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, ReviewService reviewService, FavoriteRepository favoriteRepository,FavoriteService favoriteService, CategoryRepository categoryRepository) {
 		this.restaurantRepository = restaurantRepository;
 		this.reviewRepository = reviewRepository;
 		this.reviewService = reviewService;
 		this.favoriteRepository = favoriteRepository;
         this.favoriteService = favoriteService;
+        this.categoryRepository = categoryRepository;
 	}
 	
 	// 店舗名で検索
 	@GetMapping
 	public String index(@RequestParam(name = "keyword", required = false) String keyword,
-			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, Model model)
-	{
+						@RequestParam(name = "category", required = false) String category,
+						@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable, Model model) {
+		
 		Page<Restaurant> restaurantPage;
 		
-		if (keyword != null && !keyword.isEmpty()) {
-			restaurantPage = restaurantRepository.findByNameLike("%" + keyword + "%", pageable);
+		if(keyword != null && !keyword.isEmpty()) {
+			restaurantPage = restaurantRepository.findByNameLikeOrCategoryNameLike("%" + keyword + "%", "%" + keyword + "%", pageable);
+		} else if (category != null && !category.isEmpty()) {
+			restaurantPage = restaurantRepository.findByCategoryNameLike("%" + category + "%", pageable);;
 		} else {
 			restaurantPage = restaurantRepository.findAll(pageable);
 		}
 		
 		model.addAttribute("restaurantPage", restaurantPage);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("category", category);
 		
 		return "restaurants/index";
 	}
@@ -67,7 +75,12 @@ public class RestaurantController {
 	 	// @PathVariable アノテーションでURLのパスから id を取得して、メソッドの引数に渡す。
 	    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 		 Restaurant restaurant = restaurantRepository.getReferenceById(id);
-		// お気に入り登録がまだない状態でもエラーが出ないようにする
+		
+		// restaurantからcategoryを取得
+		 List<Category> categories = categoryRepository.findAll();
+		 model.addAttribute("categories", categories);
+		
+		 // お気に入り登録がまだない状態でもエラーが出ないようにする
 		 Favorite favorite = null;
 	    // デフォルトが「ユーザーはまだその飲食店にレビューしていない」
 		boolean hasUserAlreadyReviewed = false;

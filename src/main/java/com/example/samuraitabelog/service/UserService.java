@@ -13,6 +13,7 @@ import com.example.samuraitabelog.form.UserEditForm;
 import com.example.samuraitabelog.repository.PasswordResetTokenRepository;
 import com.example.samuraitabelog.repository.RoleRepository;
 import com.example.samuraitabelog.repository.UserRepository;
+import com.example.samuraitabelog.repository.VerificationTokenRepository;
 
 @Service
 public class UserService {
@@ -20,12 +21,14 @@ public class UserService {
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final PasswordResetTokenRepository passwordResetTokenRepository;
+	private final VerificationTokenRepository verificationTokenRepository;
 	
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, VerificationTokenRepository verificationTokenRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.passwordResetTokenRepository = passwordResetTokenRepository;
+		this.verificationTokenRepository = verificationTokenRepository;
 	}
 	
 	@Transactional
@@ -115,4 +118,13 @@ public class UserService {
         User currentUser = userRepository.getReferenceById(userEditForm.getId());
         return !userEditForm.getEmail().equals(currentUser.getEmail());      
     }
+	
+	// 会員情報関連データ削除
+	@Transactional
+	public void deleteAccount(Integer userId) {
+		// ユーザーに関連するトークンを削除
+		verificationTokenRepository.deleteByUserId(userId);
+		// ユーザーを削除
+		userRepository.deleteById(userId);
+	}
 }

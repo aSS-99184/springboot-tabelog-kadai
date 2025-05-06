@@ -45,6 +45,6 @@ public class RestaurantEditForm {
 	
 	@NotBlank(message = "定休日を入力してください(例：不定休、日曜日など)。")
 	private String closeDays;
-
+	
 
 }

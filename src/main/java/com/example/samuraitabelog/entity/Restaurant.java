@@ -2,16 +2,22 @@ package com.example.samuraitabelog.entity;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "restaurants")
@@ -63,6 +69,22 @@ public class Restaurant {
 	
 	@Column(name = "update_at" )
 	private LocalDateTime updateAt;
+	
+	
+	// Categoryと多対多の関係
+	@ManyToMany
+	@JoinTable(
+		// 中間テーブル名
+		name = "category_restaurants",
+		// Restaurantエンティティの外部キー
+		joinColumns = @JoinColumn(name = "restaurant_id"),
+		// Categoryエンティティの外部キー
+		inverseJoinColumns = @JoinColumn(name = "category_id") 
+	)
+	// Categoryを除外
+	 @ToString.Exclude 
+	private Set<Category> category  = new HashSet<>();
+	
 	
 	// 今回は新着順表示で要る
 	// Java側で日時を制御(後でロジック入れれるかも)

@@ -19,8 +19,11 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests((requests) -> requests
 				// すべてのユーザーにアクセスを許可するURL
 				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset","/password/password_reset/**",   "/password/password_reset_message", "restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews").permitAll() 
+				// 管理者にアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")
-				// // 上記以外のURLはログインが必要
+				// 有料会員
+				.requestMatchers("/card/**").hasRole("PREMIUM") 
+				// 上記以外はログインが必要
 				.anyRequest().authenticated()
 			)
 

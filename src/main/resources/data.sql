@@ -67,8 +67,8 @@ INSERT IGNORE INTO roles (role_id, name) VALUES (3, 'ROLE_ADMIN');
 -- users
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (1, '侍 太郎', 'サムライ タロウ', 'taro.samurai@example.com', '$2a$10$2JNjTwZBwo7fprL2X4sv.OEKqxnVtsVQvuXDkI8xVGix.U3W5B7CO', '101-0022', '東京都千代田区神田練塀町300番地', '090-1234-5678', 1, true);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (2, '侍 花子', 'サムライ ハナコ', 'hanako.samurai@example.com', '$2a$10$2JNjTwZBwo7fprL2X4sv.OEKqxnVtsVQvuXDkI8xVGix.U3W5B7CO', '101-0022', '東京都千代田区神田練塀町300番地', '090-1234-5678', 3, true);
-INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (3, '侍 義勝', 'サムライ ヨシカツ', 'yoshikatsu.samurai@example.com', 'password', '638-0644', '奈良県五條市西吉野町湯川X-XX-XX', '090-1234-5678', 1, false);
-INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (4, '侍 幸美', 'サムライ サチミ', 'sachimi.samurai@example.com', 'password', '342-0006', '埼玉県吉川市南広島X-XX-XX', '090-1234-5678', 1, false);
+INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (3, '侍 義勝', 'サムライ ヨシカツ', 'yoshikatsu.samurai@example.com', 'password', '638-0644', '奈良県五條市西吉野町湯川X-XX-XX', '090-1234-5678', 2, true);
+INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (4, '侍 幸美', 'サムライ サチミ', 'sachimi.samurai@example.com', 'password', '342-0006', '埼玉県吉川市南広島X-XX-XX', '090-1234-5678', 2, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (5, '侍 雅', 'サムライ ミヤビ', 'miyabi.samurai@example.com', 'password', '527-0209', '滋賀県東近江市佐目町X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (6, '侍 正保', 'サムライ マサヤス', 'masayasu.samurai@example.com', 'password', '989-1203', '宮城県柴田郡大河原町旭町X-XX-XX', '090-1234-5678', 1, false);
 INSERT IGNORE INTO users (user_id, name, furigana, email, password, postal_code, address, phone_number, role_id, enabled) VALUES (7, '侍 真由美', 'サムライ マユミ', 'mayumi.samurai@example.com', 'password', '951-8015', '新潟県新潟市松岡町X-XX-XX', '090-1234-5678', 1, false);
@@ -121,4 +121,51 @@ INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (9, 9,
 INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (10, 10, 1);
 INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (11, 11, 1);
 INSERT IGNORE INTO favorites (favorite_id, restaurant_id, user_id) VALUES (12, 12, 1);
+
+-- categoriesテーブル
+INSERT IGNORE INTO categories (name) VALUES ('和食');
+INSERT IGNORE INTO categories (name) VALUES ('うなぎ');
+INSERT IGNORE INTO categories (name) VALUES ('麺類');
+INSERT IGNORE INTO categories (name) VALUES ('やきとり');
+INSERT IGNORE INTO categories (name) VALUES ('カフェ');
+INSERT IGNORE INTO categories (name) VALUES ('おでん');
+INSERT IGNORE INTO categories (name) VALUES ('丼');
+INSERT IGNORE INTO categories (name) VALUES ('洋食');
+INSERT IGNORE INTO categories (name) VALUES ('アジア料理');
+INSERT IGNORE INTO categories (name) VALUES ('フレンチ');
+INSERT IGNORE INTO categories (name) VALUES ('イタリアン');
+INSERT IGNORE INTO categories (name) VALUES ('バー');
+INSERT IGNORE INTO categories (name) VALUES ('海鮮');
+INSERT IGNORE INTO categories (name) VALUES ('居酒屋');
+
+-- category_restaurantsテーブル
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(1, 1);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(1, 3);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(2, 8);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(3, 9);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(3, 3);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(4, 5);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(5, 14);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(5, 1);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(6, 3);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(6, 14);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(7, 1);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(8, 13);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(9, 8);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(10, 9);
+INSERT IGNORE INTO category_restaurants (restaurant_id, category_id) VALUES(11, 1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -164,6 +164,12 @@ footer {
 	color: #ffa500;
 }
 
+.category-btn {
+	 background-color: white;
+	 border: 1px solid #f77736;
+	transition: 0.1s;
+}
+
 @media screen and (min-width: 1400px) {
 	.samuraitabelog-container {
 		max-width: 1200px;

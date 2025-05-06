@@ -74,7 +74,7 @@ public class AdminRestaurantController {
 			return "admin/restaurants/register";
 		}
 		
-		restaurantService.create(restaurantRegisterForm);
+		restaurantService.create(restaurantRegisterForm);	
 		redirectAttributes.addFlashAttribute("successMessage", "飲食店を登録しました。");
 		
 		return "redirect:/admin/restaurants";
@@ -84,11 +84,10 @@ public class AdminRestaurantController {
 	@GetMapping("/{id}/edit")
 	public String edit(@PathVariable(name = "id") Integer id, Model model) {
 		Restaurant restaurant = restaurantRepository.getReferenceById(id);
-		// 今登録されている画像の大ルメイをテンプレートに渡すために一時的に保存
+		// 今登録されている画像をテンプレートに渡すために一時的に保存
 		String image = restaurant.getImage();
-		
-		RestaurantEditForm restaurantEditForm = new RestaurantEditForm(restaurant.getId(), restaurant.getName(), null, restaurant.getDescription(), restaurant.getPriceRange(), restaurant.getLunchOpeningTime(), restaurant.getLunchClosingTime(), restaurant.getDinnerOpeningTime(), restaurant.getDinnerClosingTime(), restaurant.getPostalCode(), restaurant.getAddress(), restaurant.getPhoneNumber(), restaurant.getCloseDays());
 	
+		RestaurantEditForm restaurantEditForm = new RestaurantEditForm(restaurant.getId(), restaurant.getName(), null, restaurant.getDescription(), restaurant.getPriceRange(), restaurant.getLunchOpeningTime(), restaurant.getLunchClosingTime(), restaurant.getDinnerOpeningTime(), restaurant.getDinnerClosingTime(), restaurant.getPostalCode(), restaurant.getAddress(), restaurant.getPhoneNumber(), restaurant.getCloseDays());
 		model.addAttribute("image", image);
 		model.addAttribute("restaurantEditForm", restaurantEditForm);
 		

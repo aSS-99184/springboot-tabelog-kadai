@@ -24,10 +24,12 @@ import com.example.samuraitabelog.service.UserService;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+
     
     public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository; 
         this.userService = userService; 
+
     }    
     
     @GetMapping
@@ -92,6 +94,23 @@ public class UserController {
     	userService.newpassword(passwordEditForm, user);
     	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。");
     	return "redirect:/user";
+    }
+    
+    // 無料会員退会
+    @PostMapping("/delete")
+    public String deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, RedirectAttributes redirectAttributes) {
+    	// ユーザー情報を取得
+    	Integer userId = userDetailsImpl.getUser().getId();
+    	userService.deleteAccount(userId);
+
+    	try {
+    	redirectAttributes.addFlashAttribute("successMessage", "会員情報を削除しました。");
+    	return "redirect:/login?logout";
+    	
+    	} catch (Exception e) {
+    		redirectAttributes.addFlashAttribute("errorMessage", "退会処理中にエラーが発生しました。");
+    		return "redirect:/user";
+    	}
     }
 
 }

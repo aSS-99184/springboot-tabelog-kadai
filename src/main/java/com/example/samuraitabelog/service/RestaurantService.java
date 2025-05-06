@@ -1,26 +1,34 @@
 package com.example.samuraitabelog.service;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.samuraitabelog.entity.Category;
 import com.example.samuraitabelog.entity.Restaurant;
 import com.example.samuraitabelog.form.RestaurantEditForm;
 import com.example.samuraitabelog.form.RestaurantRegisterForm;
+import com.example.samuraitabelog.repository.CategoryRepository;
 import com.example.samuraitabelog.repository.RestaurantRepository;
 
 @Service
 public class RestaurantService {
 	private final RestaurantRepository restaurantRepository;
+	private final CategoryRepository categoryRepository;
 	
-	public RestaurantService(RestaurantRepository restaurantRepository) {
+	public RestaurantService(RestaurantRepository restaurantRepository, CategoryRepository categoryRepository) {
 		this.restaurantRepository = restaurantRepository;
+		this.categoryRepository = categoryRepository;
 	}
 	
 	// 登録機能
@@ -48,7 +56,12 @@ public class RestaurantService {
 		restaurant.setPhoneNumber(restaurantRegisterForm.getPhoneNumber());
 		restaurant.setCloseDays(restaurantRegisterForm.getCloseDays());
 		restaurant.setPostalCode(restaurantRegisterForm.getPostalCode());
-
+		
+		List<Category> categoryList = categoryRepository.findAllById(restaurantRegisterForm.getCategoryIds());
+		Set<Category> categorySet = new HashSet<>(categoryList);
+		// 取得したカテゴリリストを飲食店に関連付け
+		restaurant.setCategory(categorySet);
+		
 		restaurantRepository.save(restaurant);
 	}
 	
@@ -76,8 +89,7 @@ public class RestaurantService {
 		restaurant.setPhoneNumber(restaurantEditForm.getPhoneNumber());
 		restaurant.setCloseDays(restaurantEditForm.getCloseDays());
 		restaurant.setPostalCode(restaurantEditForm.getPostalCode());
-
-		restaurantRepository.save(restaurant);
+		
 	}
 	
 	

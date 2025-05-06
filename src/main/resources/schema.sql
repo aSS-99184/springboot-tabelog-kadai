@@ -90,3 +90,20 @@ CREATE TABLE IF NOT EXISTS favorites (
     FOREIGN KEY (restaurant_id) REFERENCES restaurants (restaurant_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id)  
 );
+
+CREATE TABLE IF NOT EXISTS categories (
+	category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT unique_category_name UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS category_restaurants (
+    restaurant_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (restaurant_id, category_id),
+    FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+

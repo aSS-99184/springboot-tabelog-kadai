@@ -38,7 +38,7 @@
 					 </button>
 					 
 					 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-						 <!-- ナビバーのログイン前のユーザー用メニュー -->
+						 <!-- ナビバー ログイン前のユーザー用メニュー -->
 						 <ul class="navbar-nav ms-auto">
 							 <li class="nav-item" sec:authorize="isAnonymous()">
 								 <a class="nav-link" th:href="@{/login}">ログイン</a>
@@ -47,8 +47,25 @@
 								 <a class="nav-link" th:href="@{/signup}">会員登録</a>
 							 </li>
 							 
-							 <!-- ナビバーのログイン中のユーザー用メニュー -->
+							 <!-- ナビバー ログイン中の無料会員用メニュー -->
 							 <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_GENERAL')">
+								 <a id="navbarDropdownGeneral" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+									 <span sec:authentication="principal.user.name"></span>
+								 </a>	
+								
+								 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownGeneral">
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/user}">会員情報</a>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/user/upgrade}">プレミアム会員になる</a>
+									 <div class="dropdown-divider"></div>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+										 ログアウト
+									 </a>
+									 <form class="d-none" id="logout-form" th:action="@{/logout}" method="post"></form>
+								 </div>
+							 </li>
+							 
+							 <!-- ナビバー ログイン中の有料会員用メニュー -->
+							 <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_PREMIUM')">
 								 <a id="navbarDropdownGeneral" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
 									 <span sec:authentication="principal.user.name"></span>
 								 </a>	
@@ -75,6 +92,7 @@
 								 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/admin/users}">会員一覧</a>
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/admin/restaurants}">飲食店一覧</a>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/admin/categories}">カテゴリ一覧</a>
 									 <div class="dropdown-divider"></div>
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
 										 ログアウト

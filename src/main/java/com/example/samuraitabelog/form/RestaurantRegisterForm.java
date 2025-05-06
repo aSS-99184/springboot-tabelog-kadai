@@ -1,10 +1,12 @@
 package com.example.samuraitabelog.form;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
@@ -37,5 +39,8 @@ public class RestaurantRegisterForm {
 	
 	@NotBlank(message = "定休日を入力してください(例：不定休、日曜日など)。")
 	private String closeDays;
+	
+	@NotEmpty(message = "カテゴリをチェックしてください。複数選択できます。")
+    private List<Integer> categoryIds;
 
 }

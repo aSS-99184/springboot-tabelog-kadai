@@ -2,8 +2,6 @@ package com.example.samuraitabelog.controller;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,8 +34,6 @@ public class AuthController {
 	private final VerificationTokenService verificationTokenService;
 	private final PasswordResetTokenService passwordResetTokenService;
     private final PasswordResetEventPublisher passwordResetEventPublisher;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 	
 	public AuthController(UserService userService, SignupEventPublisher signupEventPublisher, VerificationTokenService verificationTokenService, PasswordResetTokenService passwordResetTokenService, PasswordResetEventPublisher passwordResetEventPublisher) {        
         this.userService = userService;     
@@ -156,7 +152,9 @@ public class AuthController {
     		User user = passwordResetToken.getUser();
     		model.addAttribute("user", user);
     		model.addAttribute("resetToken", token);
-    		model.addAttribute("passwordEditForm", new PasswordEditForm());
+    		PasswordEditForm form = new PasswordEditForm();
+            form.setToken(token);
+    		model.addAttribute("passwordEditForm", form);
     		return "password/password_reset";
     	} else {
     		String errorMessage = "このリンクは無効です。もう一度パスワード再設定画面よりメールアドレスを入力してください。";
@@ -169,16 +167,14 @@ public class AuthController {
     @PostMapping("/password/password_reset")
     public String handlePasswordResetByToken(@ModelAttribute @Validated PasswordEditForm passwordEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
     	
-    	String token = passwordEditForm.getToken();
+    	String token = passwordEditForm.getToken();   	
+    	PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
     	
     	// 万が一トークンが無効な場合の時のエラー表示
-    	PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
     	if (resetToken == null) {
-    		redirectAttributes.addFlashAttribute("errorMessage", "再度メールアドレスの入力を行い、パスワード再設定のリンクを取得してください。");
+    		redirectAttributes.addFlashAttribute("errorMessage", "エラーが発生しました。");
     		return "redirect:/password/password_reset_request";
     	}
-    	
-    	
     	
     	// 入力パスワードと確認パスワードが一致していなければエラー
     	if (!passwordEditForm.getPassword().equals(passwordEditForm.getPasswordConfirm())) {
@@ -198,6 +194,7 @@ public class AuthController {
 
     	// 成功メッセージ
     	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。ログインしてください。");
+    	
     	return "redirect:/auth/login";
     }
    

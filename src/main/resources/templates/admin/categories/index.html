@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		
+		<div th:replace="~{fragment :: styles}"></div>
+
+		<title>カテゴリ一覧</title>
+	</head>
+	<body>
+		<div class="samuraitabelog-wrapper">
+			<!-- ヘッダー -->
+			<div th:replace="~{fragment :: header}"></div>
+			
+			<main>
+				<div class="container pt-5 pb-6 samuraitabelog-container">
+					<div class="row justify-content-center">
+						<div class="col-xxl-9 col-xl-10 col-lg-11 col-12">
+							
+							<h1 class="mb-4 text-center">カテゴリ一覧</h1>
+							
+							<!-- 成功メッセージ -->
+							<div th:if="${successMessage}" class="alert alert-info">
+								<span th:text="${successMessage}"></span>
+							</div>
+							<div th:if="${errorMessage}" class="alert alert-danger">
+	                         <span th:text="${errorMessage}"></span>
+	                     </div>
+							
+							
+							<!-- 検索窓 -->
+							<div class="d-flex justify-content-between align-items-end flex-wrap">
+								<form method="get" th:action="@{/admin/categories}" class="mb-3">
+									<div class="input-group">
+										<input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="カテゴリ">
+										<button type="submit" class="btn text-white shadow-sm samuraitabelog-btn">検索</button>
+									</div>
+								</form>
+								
+								<a th:href="@{/admin/categories/register}" class="btn text-white shadow-sm mb-3 samuraitabelog-btn">登録</a>
+							</div>							
+							
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">ID</th>
+										<th scope="col">カテゴリー</th>
+										<!-- 編集リンクスペース -->
+										<th scope="col"></th>
+										<!-- 削除リンクスペース -->
+										<th scope="col"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="category  : ${categoryPage.content}">
+										<td th:text="${category.id}"></td>
+										<td th:text="${category.name}"></td>
+										
+										<!-- 編集リンク -->
+										<td><a th:href="@{/admin/categories/__${category.id}__}" class="detail-link">編集</a></td>
+										<!-- 削除リンク -->
+										<td><a href="#" class="samuraitabelog-link-danger delete-link" data-bs-toggle="modal" th:data-bs-target="${'#deleteCategoryModal' + category.id}">削除</a>
+										
+											<!-- 削除用モーダル -->
+											<div class="modal fade" th:id="${'deleteCategoryModal' + category.id}"tabindex="-1" th:aria-labelledby="${'deleteCategoryModalLabel' + category.id}">										
+												<div class="modal-dialog">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" th:id="${'deleteCategoryModalLabel' + category.id}" th:text="${category.name } + 'を削除してもよろしいですか？'"></h5>
+															<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>														
+														</div>
+														<div class="modal-footer">
+															<form method="post" th:action="@{/admin/categories/__${category.id}__/delete}">
+																<button type="submit" class="btn samuraitabelog-btn-danger text-white shadow-sm">削除</button>
+															</form>
+														</div>
+													</div>
+												</div>							
+											</div>
+											
+										</td>
+									</tr>
+									
+								</tbody>
+							</table>
+							
+							
+							
+							
+							<!-- ページネーション -->
+							<div th:if="${categoryPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+								<nav aria-label="カテゴリ一覧ページ">
+									<ul class="pagination">
+										<!-- 前へ -->
+										<li class="page-item">
+											<span th:if="${categoryPage.isFirst()}" class="page-link disabled">前</span>
+											<!-- 検索キーワードをページ移動のときも引き継ぐ -->
+											<a th:unless="${categoryPage.isFirst()}" th:href="@{/admin/categories(page = ${categoryPage.number - 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">前</a>
+										</li>
+										<!-- ページ番号 -->
+										<li th:each="i : ${#numbers.sequence(0, categoryPage.getTotalPages() - 1)}" class="page-item">
+											<span th:if="${i == categoryPage.number}" class="page-link active samuraitabelog-active" th:text="${i + 1}"></span>
+											<a th:unless="${i == categoryPage.number}" th:href="@{/admin/categories(page = ${i}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link" th:text="${i + 1}"></a>
+										</li>
+										<!-- 次へ -->
+										<li class="page-item">
+											<span th:if="${categoryPage.isLast()}" class="page-link disabled">次</span>
+											<a th:unless="${categoryPage.isLast()}" th:href="@{/admin/categories(page = ${categoryPage.number + 1}, keyword = ${keyword})}" class="page-link samuraitabelog-page-link">次</a>
+										</li>
+									</ul>
+								</nav>	
+							</div>
+						</div>
+					</div>				
+				</div>
+			</main>
+			
+			<!-- フッター -->
+			<div th:replace="~{fragment :: footer}"></div>
+		</div>
+		
+		<!-- Bootstrap -->
+		<div th:replace="~{fragment :: scripts}"></div>
+	</body>
+</html>
