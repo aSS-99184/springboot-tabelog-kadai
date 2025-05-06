@@ -1,5 +1,7 @@
 package com.example.samuraitabelog.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,11 @@ public class CategoryService {
 		category.setName(categoryEditForm.getName());
 		
 		categoryRepository.save(category);
+	}
+	
+	@Transactional
+	public List<Category> findAll() {
+		return categoryRepository.findAll();
 	}
 	
 	

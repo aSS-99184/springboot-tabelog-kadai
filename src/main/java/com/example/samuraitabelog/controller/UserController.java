@@ -112,5 +112,12 @@ public class UserController {
     		return "redirect:/user";
     	}
     }
+    
+	/*    // クレジットカード情報編集
+	@PostMapping("/payment-edit")
+	
+	// 有料会員解約 
+	@PostMapping("/cancel")*/
+    
 
 }

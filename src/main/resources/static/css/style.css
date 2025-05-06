@@ -170,6 +170,17 @@ footer {
 	transition: 0.1s;
 }
 
+.category-list {
+	list-style-type: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+.category-list li{
+	float: left;
+	margin-right: 8px;
+}
+
 @media screen and (min-width: 1400px) {
 	.samuraitabelog-container {
 		max-width: 1200px;

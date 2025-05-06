@@ -146,7 +146,18 @@
 									</div>
 								</div>
 								
-														
+								<!-- categoryはリストだからループさせて表示 -->
+								<div class="row pb-2 mb-3 border-bottom">					
+									<div class="col-4">
+										<span class="fw-bold">カテゴリー</span>
+									</div>								
+									<div class="col">
+										<ul class="mb-0 category-list">
+											<li th:each="category : ${categories}" th:text="${category.name}"></li>
+										</ul>
+									</div>
+								</div>
+													
 							</div>
 						</div>
 					</div>

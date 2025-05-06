@@ -73,11 +73,12 @@ public class RestaurantController {
 	// 特定の店舗の詳細をURLでリクエストして、店舗のshowを表示する
 	 @GetMapping("/{id}")
 	 	// @PathVariable アノテーションでURLのパスから id を取得して、メソッドの引数に渡す。
-	    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+	    public String show(@PathVariable(name = "id") Integer id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {		 
+		// レストラン取得
 		 Restaurant restaurant = restaurantRepository.getReferenceById(id);
-		
-		// restaurantからcategoryを取得
-		 List<Category> categories = categoryRepository.findAll();
+
+		// そのレストランに紐づくカテゴリだけ取得
+		 List<Category> categories = categoryRepository.findByRestaurant_Id(id);
 		 model.addAttribute("categories", categories);
 		
 		 // お気に入り登録がまだない状態でもエラーが出ないようにする

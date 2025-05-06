@@ -89,6 +89,11 @@ public class RestaurantService {
 		restaurant.setPhoneNumber(restaurantEditForm.getPhoneNumber());
 		restaurant.setCloseDays(restaurantEditForm.getCloseDays());
 		restaurant.setPostalCode(restaurantEditForm.getPostalCode());
+
+		Set<Integer> categoryIdsSet = new HashSet<>(restaurantEditForm.getCategoryIds());
+		List<Category> categoryList = categoryRepository.findAllById(categoryIdsSet);
+		Set<Category> categorySet = new HashSet<>(categoryList);
+		restaurant.setCategory(categorySet);
 		
 	}
 	
