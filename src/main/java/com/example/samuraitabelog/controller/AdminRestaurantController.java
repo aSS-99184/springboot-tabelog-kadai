@@ -1,6 +1,7 @@
 package com.example.samuraitabelog.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -96,6 +98,7 @@ public class AdminRestaurantController {
 	}
 	
 	// 編集フォームの表示
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}/edit")
 	public String edit(@PathVariable(name = "id") Integer id, Model model) {
 		Restaurant restaurant = restaurantRepository.getReferenceById(id);
@@ -103,7 +106,10 @@ public class AdminRestaurantController {
 		String image = restaurant.getImage();
 	
 		// ローカル変数も categoryIds にする
-		List<Integer> categoryIds = restaurant.getCategory().stream().map(Category::getId).toList();
+		List<Integer> categoryIds = new ArrayList<>();
+		for (Category category : new ArrayList<>(restaurant.getCategory())) {
+			categoryIds.add(category.getId());
+		}
 		
 		RestaurantEditForm restaurantEditForm = new RestaurantEditForm(restaurant.getId(), restaurant.getName(), null, restaurant.getDescription(), restaurant.getPriceRange(), restaurant.getLunchOpeningTime(), restaurant.getLunchClosingTime(), restaurant.getDinnerOpeningTime(), restaurant.getDinnerClosingTime(), restaurant.getPostalCode(), restaurant.getAddress(), restaurant.getPhoneNumber(), restaurant.getCloseDays(),categoryIds);
 		model.addAttribute("image", image);

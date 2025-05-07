@@ -57,6 +57,7 @@ public class RestaurantService {
 		restaurant.setCloseDays(restaurantRegisterForm.getCloseDays());
 		restaurant.setPostalCode(restaurantRegisterForm.getPostalCode());
 		
+		restaurant.getCategory();
 		List<Category> categoryList = categoryRepository.findAllById(restaurantRegisterForm.getCategoryIds());
 		Set<Category> categorySet = new HashSet<>(categoryList);
 		// 取得したカテゴリリストを飲食店に関連付け
@@ -89,11 +90,18 @@ public class RestaurantService {
 		restaurant.setPhoneNumber(restaurantEditForm.getPhoneNumber());
 		restaurant.setCloseDays(restaurantEditForm.getCloseDays());
 		restaurant.setPostalCode(restaurantEditForm.getPostalCode());
-
-		Set<Integer> categoryIdsSet = new HashSet<>(restaurantEditForm.getCategoryIds());
-		List<Category> categoryList = categoryRepository.findAllById(categoryIdsSet);
-		Set<Category> categorySet = new HashSet<>(categoryList);
+		// 重複なしのリストを用意
+		Set<Category> categorySet = new HashSet<>();
+		// restaurantEditForm.getCategoryIds() からカテゴリIDのリストを受け取る。カテゴリがnullじゃなくて、かつ空じゃないなら
+		if (restaurantEditForm.getCategoryIds() != null && !restaurantEditForm.getCategoryIds().isEmpty()) {
+			// Category エンティティをDBからまとめて取得して
+			List<Category> categoryList = categoryRepository.findAllById(restaurantEditForm.getCategoryIds());
+			categorySet.addAll(categoryList); 
+		}
+		// 取得したカテゴリを Set<Category> にセット
 		restaurant.setCategory(categorySet);
+		
+		restaurantRepository.save(restaurant);
 		
 	}
 	
