@@ -13,7 +13,7 @@ public class UserDetailsImpl implements UserDetails {
 	
 	public UserDetailsImpl(User user, Collection<GrantedAuthority> authorities) {
 		this.user = user;
-		this.authorities = authorities;
+		this.authorities =  authorities;
 	}
 	
 	public User getUser() {

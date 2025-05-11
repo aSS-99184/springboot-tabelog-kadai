@@ -55,7 +55,7 @@
 								
 								 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownGeneral">
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/user}">会員情報</a>
-									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/user/upgrade}">プレミアム会員になる</a>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/subscription/premium}">プレミアム会員になる</a>
 									 <div class="dropdown-divider"></div>
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
 										 ログアウト
@@ -74,6 +74,8 @@
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/user}">会員情報</a>
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/reservations}">予約一覧</a>
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/favorites}">お気に入り一覧</a>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/subscription/payment}">クレジットカード情報を編集</a>
+									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/subscription/cancel}">プレミアム会員を解約</a>
 									 <div class="dropdown-divider"></div>
 									 
 									 <a class="dropdown-item samuraitabelog-dropdown-item" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

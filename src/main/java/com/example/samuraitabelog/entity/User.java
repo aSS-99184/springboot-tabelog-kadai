@@ -55,5 +55,8 @@ public class User {
     
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updateAt;
+    
+    @Column(name = "stripe_customer_id", nullable = true)
+    private String stripeCustomerId;
 
 }

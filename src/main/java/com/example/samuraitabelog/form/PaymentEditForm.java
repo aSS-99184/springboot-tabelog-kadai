@@ -1,8 +1,10 @@
 package com.example.samuraitabelog.form;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
-public class paymentEditForm {
+@Data
+public class PaymentEditForm {
 	@NotBlank(message = "カード番号を入力してください。")
 	private String cardNumber;
 	

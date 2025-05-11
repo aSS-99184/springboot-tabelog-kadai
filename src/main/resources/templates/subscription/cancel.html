@@ -6,7 +6,7 @@
 		<title>プレミアム会員解約</title>
 	</head>
 	<body>
-		<div class="samuraitabelog-wrapper">
+		<div sec:authorize="hasRole('PREMIUM')" class="samuraitabelog-wrapper">
 			<!-- ヘッダー -->
 			<div th:replace="~{fragment :: header}"></div>
 			
@@ -25,14 +25,25 @@
 							</nav>
 							
 							<h1 class="mb-4 text-center">プレミアム会員を解約</h1>
-						
-							<div class="col-md-8 d-flex justify-content-center">
-								<p>解約するとお店の予約、お気に入り登録、レビュー投稿ができなくなります。</p>
-							</div>									
 							
-							<div class="form-group d-flex justify-content-center my-4">
-								<button type="submit" class="btn text-white shadow-sm w-25 samuraitabelog-btn">解約</button>
-							</div>																
+							<div th:if="${status} == 'done'" class="alert alert-success text-center">
+								解約が完了しました。
+							</div>
+							<div th:if="${status} == 'failed'"class="alert alert-danger text-center">
+								解約に失敗しました。再度お試しください。
+							</div>
+							
+							<div class="d-flex justify-content-center">
+								<div class="col-md-8 text-center">
+									<p>解約するとお店の予約、お気に入り登録、レビュー投稿ができなくなりますがよろしいですか？</p>
+								</div>
+							</div>
+								
+							<form th:action="@{/subscription/cancel-subscription}" method="post">													
+								<div class="form-group d-flex justify-content-center my-4">
+									<button type="submit" class="btn text-white shadow-sm w-25 samuraitabelog-btn">解約</button>
+								</div>
+							</form>															
 						</div>
 					</div>
 				</div>				
@@ -42,6 +53,11 @@
 			<div th:replace="~{fragment :: footer}"></div>		
 		</div>
 		<div th:replace="~{fragment :: scripts}"></div>
+		<script src="https://js.stripe.com/v3"></script>
+		<script th:inline="javascript">
+			const sessionId = /*[[${SessionId}]]*/"SessionId";
+		</script>
+		<script th:src="@{/js/stripe.js}"></script>
 
 	</body>
 </html>

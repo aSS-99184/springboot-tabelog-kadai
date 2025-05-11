@@ -37,7 +37,7 @@ public class UserService {
 		// 登録するユーザーの箱
 		User user = new User();		
 		// 会員登録で作るユーザーは無料会員
-		Role role = roleRepository.findByName("ROLE_GENERAL");
+		Role role = roleRepository.findByName("ROLE_GENERAL").orElseThrow(() -> new RuntimeException("Role 'ROLE_GENERAL' not found"));
 		
 		// 登録のためのデータ準備
 		user.setName(signupForm.getName());
@@ -127,4 +127,28 @@ public class UserService {
 		// ユーザーを削除
 		userRepository.deleteById(userId);
 	}
+	
+	// 有料会員登録
+	@Transactional
+	public void updateUserRoleToPremium(User user) {
+		Role premiumRole = roleRepository.findByName("ROLE_PREMIUM")
+				.orElseThrow(() -> new RuntimeException("Role 'ROLE_PREMIUM' not found"));
+		// ユーザーのロールを "ROLE_PREMIUM" に設定
+		user.setRole(premiumRole);
+		userRepository.save(user);
+	}
+	
+	// 有料会員解約
+	@Transactional
+	public void updateUserRoleToGeneral(User user) {
+		Role generalRole = roleRepository.findByName("ROLE_GENERAL")
+				.orElseThrow(() -> new RuntimeException("Role 'ROLE_GENERAL' not found"));
+		user.setRole(generalRole);
+		userRepository.save(user);
+	}
+	
+	
+	
+	
+	
 }
