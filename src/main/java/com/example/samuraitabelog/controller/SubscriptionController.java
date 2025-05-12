@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.samuraitabelog.entity.User;
-import com.example.samuraitabelog.form.PaymentEditForm;
 import com.example.samuraitabelog.repository.RoleRepository;
 import com.example.samuraitabelog.security.UserDetailsImpl;
 import com.example.samuraitabelog.service.SubscriptionService;
@@ -79,14 +78,24 @@ public class SubscriptionController {
 	// クレジットカード情報変更ページを表示
 	@PreAuthorize("hasRole('PREMIUM')")
 	@GetMapping("/payment")
-	public String showPaymentPage(Model model) {
-		model.addAttribute("paymentEditForm", new PaymentEditForm()); 
+	public String showPaymentPage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
+		User user = userDetailsImpl.getUser(); 
+		if (user == null) {
+		return "subscription/payment";
+	}
+		String sessionId = subscriptionService.updateCardSession(user);
+		if (sessionId == null) {
+			model.addAttribute("status", "failed");
+			return "subscription/payment";
+		}
+		// JavaScriptに渡す
+		model.addAttribute("sessionId", sessionId);
 		return "subscription/payment";
 	}
 	
 	// クレジットカード情報の編集セッション
 	@PostMapping("/update-card-session")
-	public String updateCardSession(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
+	public String updateCardSession(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 		User user = userDetailsImpl.getUser();
 		if (user == null) {
 			return "redirect:/login";
@@ -94,11 +103,9 @@ public class SubscriptionController {
 		String sessionId = subscriptionService.updateCardSession(user);
 		
 		if (sessionId == null) {
-			model.addAttribute("status", "failed");
-			return "subscription/payment";
+			return "redirect:/subscription/payment?status=failed";
 		}
-		model.addAttribute("sessionId", sessionId);
-		return "subscription/redirect"; 
+		return "redirect:/subscription/payment?status=done"; 
 	}
 	
 	// 有料会員解約ページを表示

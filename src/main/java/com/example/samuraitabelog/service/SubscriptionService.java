@@ -177,11 +177,26 @@ public class SubscriptionService {
 	public String updateCardSession(User user) {
 		Stripe.apiKey = stripeApiKey;
 		String stripeCustomerId = user.getStripeCustomerId();
+		// 顧客IDがなかったら新しく作る
 		if (stripeCustomerId == null || stripeCustomerId.isEmpty()) {
-			throw new IllegalStateException("Stripeの顧客IDが登録されていません");
+			
+			try {
+				Customer customer = Customer.create(
+						CustomerCreateParams.builder()
+						.setEmail(user.getEmail())
+						.build());
+				stripeCustomerId = customer.getId();
+				user.setStripeCustomerId(stripeCustomerId);
+				userRepository.save(user);
+			} catch (StripeException e) {
+				e.printStackTrace();
+				throw new IllegalStateException("Stripeの顧客IDが登録されていません");
+			}
 		}
+		
 		String requestUrl = httpServletRequest.getRequestURL().toString();
-
+		System.out.println("Request URL: " + requestUrl); 
+		
 			SessionCreateParams params = SessionCreateParams.builder()
 					.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
 					.setMode(SessionCreateParams.Mode.SETUP)
@@ -191,8 +206,12 @@ public class SubscriptionService {
 					// ユーザーが処理を途中でキャンセルしたときに戻る場所
 					.setCancelUrl("http://localhost:8080/subscription/payment?status=failed")
 					.build();
+			System.out.println("Success URL: " + "http://localhost:8080/subscription/payment?status=done");
+			System.out.println("Cancel URL: " + "http://localhost:8080/subscription/payment?status=failed");
+			
 			try {
 				Session session = Session.create(params);
+				System.out.println("Session ID: " + session.getId());
 				return session.getId();
 			} catch (StripeException e) {
 				e.printStackTrace();
