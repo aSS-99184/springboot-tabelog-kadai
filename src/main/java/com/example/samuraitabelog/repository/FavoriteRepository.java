@@ -11,5 +11,6 @@ import com.example.samuraitabelog.entity.User;
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer>{
 	public Page<Favorite> findByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 	public Favorite findByRestaurantAndUser(Restaurant restaurant, User user);
+	public void deleteByUserId(Integer userId);
 
 }

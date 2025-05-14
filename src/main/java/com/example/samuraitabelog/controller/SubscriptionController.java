@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.repository.RoleRepository;
+import com.example.samuraitabelog.repository.UserRepository;
 import com.example.samuraitabelog.security.UserDetailsImpl;
 import com.example.samuraitabelog.service.SubscriptionService;
 import com.example.samuraitabelog.service.UserService;
@@ -24,16 +25,19 @@ public class SubscriptionController {
 	@Autowired
 	private SubscriptionService subscriptionService;
 	@Autowired
-	private final UserService userService;
+	private UserService userService;
+	@Autowired
+	private UserRepository userRepository;
 	@Autowired
 	private RoleRepository roleRepository;
 	@Value("${stripe.public.key}")
 	private String stripePublicKey;
 	
-	public SubscriptionController(SubscriptionService subscriptionService, UserService userService, RoleRepository roleRepository) { 
+	public SubscriptionController(SubscriptionService subscriptionService, UserService userService, RoleRepository roleRepository,UserRepository userRepository) { 
 		this.subscriptionService = subscriptionService;
 		this.userService = userService;
 		this.roleRepository = roleRepository;
+		this.userRepository = userRepository;
 	}
 
 	// 有料会員登録ページを表示
@@ -43,7 +47,7 @@ public class SubscriptionController {
 		return "subscription/premium";
 	}
 	
-	// Stripe セッションを作成して、Stripeの支払い画面へリダイレクト
+	// 有料会員登録 Stripe セッションを作成して、Stripeの支払い画面へリダイレクト
 	@PostMapping("/create-checkout-session")
 	public String createCheckoutSession(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
 		User user = userDetailsImpl.getUser(); 
@@ -55,14 +59,21 @@ public class SubscriptionController {
 		}
 		
 		try {
-			 // UserServiceを使ってユーザーを更新
+			 // UserServiceを使ってユーザーをPREMIUMに更新
 			userService.updateUserRoleToPremium(user);
+			// DBからPREMIUMに更新されたデータを取得
+			User updatedUser = userRepository.findById(user.getId()).orElseThrow();			
+			// userDetailsImpl を上書き
+			userDetailsImpl.updateUserRole(updatedUser);
+			
 			// Stripe セッションを作成
-			String sessionId = subscriptionService.createStripeSession(user);
+			String sessionId = subscriptionService.createStripeSession(updatedUser);
 			// セッションIDをモデルに追加
 			model.addAttribute("sessionId", sessionId);	
 			// Stripe 公開鍵をモデルに追加
 			model.addAttribute("stripePublicKey", stripePublicKey);
+			// ユーザーのロールがプレミアムに更新され、Stripe セッションが作成された後、プレミアム会員登録成功メッセージ
+			model.addAttribute("status", "success");
 			
 		// エラーが発生した場合
 		} catch (Exception e) {
@@ -70,8 +81,6 @@ public class SubscriptionController {
 			model.addAttribute("status", "failed");
 			return "subscription/premium";
 		}
-		// プレミアム会員登録成功メッセージ
-		model.addAttribute("status", "success");
 		return "subscription/premium";
 	}
 	
@@ -136,5 +145,7 @@ public class SubscriptionController {
 			return "redirect:/subscription/cancel?status=failed";
 		}
 	}
+	
+
 
 }

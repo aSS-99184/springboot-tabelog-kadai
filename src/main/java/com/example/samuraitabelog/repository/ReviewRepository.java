@@ -15,4 +15,6 @@ public interface  ReviewRepository extends JpaRepository<Review, Integer> {
 		   public Review findByRestaurantAndUser(Restaurant restaurant, User user);
 		   public long countByRestaurant(Restaurant restaurant);
 		   public Page<Review> findByRestaurantOrderByCreatedAtDesc(Restaurant restaurant, Pageable pageable);
+		   public void deleteByUserId(Integer userId);
 }
+

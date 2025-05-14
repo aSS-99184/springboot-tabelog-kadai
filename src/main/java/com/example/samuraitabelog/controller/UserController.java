@@ -104,7 +104,7 @@ public class UserController {
     	userService.deleteAccount(userId);
 
     	try {
-    	redirectAttributes.addFlashAttribute("successMessage", "会員情報を削除しました。");
+    	redirectAttributes.addFlashAttribute("successMessage", "会員情報を削除しました。再度利用したい場合は、会員登録を行ってください。");
     	return "redirect:/login?logout";
     	
     	} catch (Exception e) {
@@ -112,12 +112,4 @@ public class UserController {
     		return "redirect:/user";
     	}
     }
-    
-	/*    // クレジットカード情報編集
-	@PostMapping("/payment-edit")
-	
-	// 有料会員解約 
-	@PostMapping("/cancel")*/
-    
-
 }

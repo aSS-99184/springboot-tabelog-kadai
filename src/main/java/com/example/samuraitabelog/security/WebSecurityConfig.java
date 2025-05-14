@@ -1,3 +1,4 @@
+
 package com.example.samuraitabelog.security;
 
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests((requests) -> requests
 				// すべてのユーザーにアクセスを許可するURL
-				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset","/password/password_reset/**",   "/password/password_reset_message", "restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook").permitAll() 
+				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset","/password/password_reset/**",   "/password/password_reset_message", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium").permitAll() 
 				// 管理者にアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				// 無料会員にのみアクセスを許可するURL

@@ -9,5 +9,6 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 	public PasswordResetToken findByToken(String token);
 	// 最新のトークンを1件取得
 	public PasswordResetToken findTopByUserOrderByCreatedAtDesc(User user);
+	public void deleteByUserId(Integer userId);
 
 }

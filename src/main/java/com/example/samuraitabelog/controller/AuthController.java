@@ -88,7 +88,7 @@ public class AuthController {
         if (verificationToken != null) {
             User user = verificationToken.getUser();  
             userService.enableUser(user);
-            String successMessage = "会員登録が完了しました。";
+            String successMessage = "会員登録が完了しました。ログインしてください。";
             model.addAttribute("successMessage", successMessage);            
         } else {
             String errorMessage = "認証に失敗しました。もう一度登録をお願いします。";

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS restaurants(
 	phone_number VARCHAR(50) NOT NULL,
 	close_days VARCHAR(100),
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	update_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	update_at DATETIME DEFAULT CURRENT_TIMESTAMP  ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS roles (
@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS verification_tokens (
     token VARCHAR(255) NOT NULL,        
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (user_id) 
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    
 );
 
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
@@ -53,7 +54,7 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     token VARCHAR(255) NOT NULL,        
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (user_id) 
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS favorites (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE (restaurant_id, user_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants (restaurant_id),
-    FOREIGN KEY (user_id) REFERENCES users (user_id)  
+    FOREIGN KEY (user_id) REFERENCES users (user_id) 
 );
 
 CREATE TABLE IF NOT EXISTS categories (

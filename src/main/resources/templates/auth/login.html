@@ -19,8 +19,11 @@
 							<h1 class="mb-4 text-center">ログイン</h1>
 							
 							<div th:if="${successMessage}" class="alert alert-success">
-    							<p th:text="${successMessage}"></p>
-							</div>
+    							<span th:text="${successMessage}"></span>
+							</div>                        
+                           <div th:if="${errorMessage}" class="alert alert-danger">
+                               <span th:text="${errorMessage}"></span>
+                           </div>
 							
 							<div class="row mb-1">
                                 <p class="text-danger">

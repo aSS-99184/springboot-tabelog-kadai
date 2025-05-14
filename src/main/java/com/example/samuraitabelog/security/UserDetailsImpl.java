@@ -54,5 +54,9 @@ public class UserDetailsImpl implements UserDetails {
 	 public boolean isEnabled() {
 		 return user.getEnabled();
 	 }
+	 
+	 public UserDetailsImpl updateUserRole(User updatedUser){
+		 return  new UserDetailsImpl(updatedUser, this.authorities);
+	 }
 
 }

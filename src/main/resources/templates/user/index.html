@@ -102,7 +102,7 @@
                                    </div>
                                </div>
                            </div>
-                         <form method="post" action="/user/delete" onsubmit="return confirm('本当に退会しますか？');">
+                         <form method="post" action="/user/delete" onsubmit="return confirm('プレミアム会員の場合、レビュー・お気に入り・予約登録ができなくなります。本当に退会しますか？');">
 		                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 		                   <div class="form-group d-flex justify-content-end my-4">
 								<button type="submit" class="btn text-black  w-25" style="background-color: white; ">

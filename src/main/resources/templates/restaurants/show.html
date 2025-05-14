@@ -31,7 +31,7 @@
 								</nav>
 								
 								<!-- お気に入り -->
-								<div sec:authorize="isAuthenticated()">
+								<div sec:authorize="hasRole('PREMIUM')">
                                     <div th:if="${isFavorite}">
                                         <a href="#" onclick="event.preventDefault(); document.getElementById('favorite-form').submit();">&#9829; お気に入り解除</a>
                                         <form method="post" th:action="@{/restaurants/__${restaurant.id}__/favorites/__${favorite.id}__/delete}" id="favorite-form" class="d-none"></form>                                        
@@ -175,18 +175,18 @@
 																	
 									</div>
 									
-									<!-- 未ログイン時の表示 -->
-									<div sec:authorize="isAnonymous()" class="col-lg-4 px-0 ps-lg-4 mb-4">
+									<!-- 未ログインまたはプレミアム会員ではないユーザー -->
+		                            <div sec:authorize="isAnonymous() or !hasRole('PREMIUM')" class="col-lg-4 px-0 ps-lg-4 mb-4">
 										<div class="card">
 											<div class="card-body">
-												<p class="card-text">予約するには<a th:href="@{/login}">ログイン</a>が必要です。</p>
-												<button type="submit" class="btn text-white shadow-sm w-100 samuraitabelog-btn" disabled>予約する</button>                                                                                                                
-		                                    </div>
-		                                </div>  
-		                            </div>
+												<p class="card-text">予約するには <a th:href="@{/subscription/premium}">プレミアム会員登録</a> が必要です。</p>
+												<button type="submit" class="btn text-white shadow-sm w-100 samuraitabelog-btn" disabled>予約する</button>
+											</div>
+										</div>
+									</div>
 		                            
 		                            <!-- ログイン後、予約カレンダーの表示 -->
-		                            <div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">                  
+		                            <div sec:authorize="hasRole('PREMIUM')" class="col-lg-4 px-0 ps-lg-4 mb-4">                  
                                         <div class="card">
                                             <div class="card-body"> 
                                                 <form method="get" th:action="@{/restaurants/__${restaurant.id}__/reservations/input}" th:object="${reservationInputForm}">                                                                                                                                                                       
@@ -215,10 +215,22 @@
 							<!-- レビューセクション -->
 							<div class="container px-0">
                                 <h2 class="mb-4 text-center">レビュー</h2>
-                                <div sec:authorize="isAuthenticated()" th:unless="${hasUserAlreadyReviewed}" class="row justify-content-center mb-4">
-                                    <div class="col-lg-4">
-                                        <a th:href="@{/restaurants/__${restaurant.id}__/reviews/register}" class="btn text-white shadow-sm w-100 samuraitabelog-btn">レビューを投稿する</a>
-                                    </div>
+                                
+                            	<!-- 未ログインまたはプレミアム会員ではないユーザー -->
+								<div sec:authorize="isAnonymous() or !hasRole('PREMIUM')" class="row justify-content-center mb-4">
+									<div class="col-lg-4">
+										<p class="text-center mt-2 ">レビュー投稿するには<br> <a th:href="@{/subscription/premium}">プレミアム会員登録</a> が必要です。</p>
+										<button type="submit" class="btn text-white shadow-sm w-100 samuraitabelog-btn" disabled>投稿する</button>
+									</div>
+								</div>
+								
+								<!-- PREMIUMのみがレビュー投稿できるボタン -->
+								<div sec:authorize="hasRole('PREMIUM')" th:unless="${hasUserAlreadyReviewed}" class="row justify-content-center mb-4">
+									<div class="col-lg-4">
+										<a th:href="@{/restaurants/__${restaurant.id}__/reviews/register}" class="btn text-white shadow-sm w-100 samuraitabelog-btn">投稿する</a>	
+									</div>
+								</div>
+
                                 </div>
                                 <div th:if="${#lists.isEmpty(newReviews)}" class="mb-4">                                    
                                     <p class="text-center">まだレビューがありません。</p>                                    
@@ -230,7 +242,7 @@
                                                 <div class="card-body">
                                                     <div class="d-flex justify-content-between">
                                                         <h5 class="card-title" th:text="${review.user.name}"></h5>
-                                                        <span sec:authorize="isAuthenticated()" th:if="${#authentication.principal.user.id == review.user.id}">
+                                                        <span sec:authorize="hasRole('PREMIUM')" th:if="${#authentication.principal.user.id == review.user.id}">
                                                             <a th:href="@{/restaurants/__${restaurant.id}__/reviews/__${review.id}__/edit}" class="me-2">編集</a>
                                                             <a href="#" class="samuraitabelog-link-danger" data-bs-toggle="modal" th:data-bs-target="${'#deleteReviewModal' + review.id}">削除</a>
                                                             <!-- 削除用モーダル -->
@@ -265,14 +277,14 @@
                                     <a th:href="@{/restaurants/__${restaurant.id}__/reviews}">すべてのレビューを見る</a>
                                 </div>                                                            
                             </div> 
-							
 						</div>
 					</div>
 				</div>
 			</main>
 			
 			<!-- フッター -->
-			<div th:replace="~{fragment :: footer}"></div>
+           <div th:replace="~{fragment :: footer}"></div>
+			
 		</div>
 		
 		<!-- Bootstrap -->

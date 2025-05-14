@@ -10,7 +10,10 @@ import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.form.PasswordEditForm;
 import com.example.samuraitabelog.form.SignupForm;
 import com.example.samuraitabelog.form.UserEditForm;
+import com.example.samuraitabelog.repository.FavoriteRepository;
 import com.example.samuraitabelog.repository.PasswordResetTokenRepository;
+import com.example.samuraitabelog.repository.ReservationRepository;
+import com.example.samuraitabelog.repository.ReviewRepository;
 import com.example.samuraitabelog.repository.RoleRepository;
 import com.example.samuraitabelog.repository.UserRepository;
 import com.example.samuraitabelog.repository.VerificationTokenRepository;
@@ -22,13 +25,19 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final PasswordResetTokenRepository passwordResetTokenRepository;
 	private final VerificationTokenRepository verificationTokenRepository;
+	private final ReviewRepository reviewRepository;
+	private final ReservationRepository reservationRepository;
+	private final FavoriteRepository favoriteRepository;
 	
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, VerificationTokenRepository verificationTokenRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, VerificationTokenRepository verificationTokenRepository, ReviewRepository reviewRepository, ReservationRepository reservationRepository, FavoriteRepository favoriteRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.passwordResetTokenRepository = passwordResetTokenRepository;
 		this.verificationTokenRepository = verificationTokenRepository;
+		this.reviewRepository = reviewRepository;
+		this.reservationRepository = reservationRepository;
+		this.favoriteRepository = favoriteRepository;
 	}
 	
 	@Transactional
@@ -122,8 +131,11 @@ public class UserService {
 	// 会員情報関連データ削除
 	@Transactional
 	public void deleteAccount(Integer userId) {
-		// ユーザーに関連するトークンを削除
-		verificationTokenRepository.deleteByUserId(userId);
+		favoriteRepository.deleteByUserId(userId);
+	    reviewRepository.deleteByUserId(userId);
+	    reservationRepository.deleteByUserId(userId);
+	    passwordResetTokenRepository.deleteByUserId(userId);
+	    verificationTokenRepository.deleteByUserId(userId);
 		// ユーザーを削除
 		userRepository.deleteById(userId);
 	}
