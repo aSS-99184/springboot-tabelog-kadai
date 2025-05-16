@@ -3,12 +3,14 @@ package com.example.samuraitabelog.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -25,8 +27,10 @@ public class WebSecurityConfig {
 				// 無料会員にのみアクセスを許可するURL
 				.requestMatchers("/subscription/premium", "/create-checkout-session").hasRole("GENERAL")
 				// 有料会員にのみアクセスを許可するURL
-				.requestMatchers("/subscription/payment", "/subscription/update-card-session", "/subscription/cancel", "/subscription/cancel-subscription").hasRole("PREMIUM")
-						
+				.requestMatchers("/subscription/payment", "/subscription/update-card-session", "/subscription/cancel").hasRole("PREMIUM")
+				// 無料＆有料会員にアクセス許可
+				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription").authenticated()
+				
 				// 上記以外はログインが必要
 				.anyRequest().authenticated()
 			)
@@ -42,7 +46,7 @@ public class WebSecurityConfig {
 				.logoutSuccessUrl("/?loggedOut")
 				.permitAll()
 				)
-				.csrf().ignoringRequestMatchers("/stripe/webhook");
+			.csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/stripe/webhook")));
 		return http.build();
 	}
 	

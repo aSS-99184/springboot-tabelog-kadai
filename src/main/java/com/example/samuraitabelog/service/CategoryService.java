@@ -39,9 +39,5 @@ public class CategoryService {
 	public List<Category> findAll() {
 		return categoryRepository.findAll();
 	}
-	
-	
-	
-	
 
 }

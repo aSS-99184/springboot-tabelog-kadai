@@ -25,10 +25,10 @@
 							</nav>
 							
 							<h1 class="mb-4 text-center">プレミアム会員になる</h1>
-							<div th:if="${status == 'success'}" class="alert alert-success text-center">
+							<div th:if="${param.status == 'success'}" class="alert alert-success text-center">
 								おめでとうございます！プレミアム会員になりました。
 							</div>
-							<div th:if="${status == 'failed'}" class="alert alert-danger text-center">
+							<div th:if="${param.status == 'failed'}" class="alert alert-danger text-center">
 								登録に失敗しました。再度お試し下さい。
 							</div>
 						
@@ -36,12 +36,14 @@
 								<div class="col-md-8 text-center">
 								 <p>月々300円で、お店の予約、お気に入り登録、レビュー投稿ができます。</p>
 								</div>
-							</div>									
-							<form th:action="@{/subscription/create-checkout-session}" method="post">
-								<div class="form-group d-flex justify-content-center my-4">
-									<button type="submit" class="btn text-white shadow-sm w-25 samuraitabelog-btn">登録</button>
-								</div>	
-							</form>															
+							</div>	
+							<div sec:authorize="!hasRole('PREMIUM')">								
+								<form th:action="@{/subscription/create-checkout-session}" method="post">
+									<div class="form-group d-flex justify-content-center my-4">
+										<button type="submit" class="btn text-white shadow-sm w-25 samuraitabelog-btn">登録</button>
+									</div>	
+								</form>	
+							</div>															
 						</div>
 					</div>
 				</div>				
@@ -55,7 +57,7 @@
 		<script th:inline="javascript">
 			const sessionId = /*[[${sessionId}]]*/"sessionId";
 			if (sessionId) { 
-				var stripe = Stripe('pk_test_51R6mqdIc44qIhXiAT7yJAOJWWhFdxHgTTV30JpnawCX63jE6yEtM9Cdh65AbYB0wDoqSPcHM4xl39AyeZljNmGI100x9QgwDbl'); 
+				var stripe = Stripe('pk_test_51R6mqrRSOota6fUsZ44ZqeSyzuIwi3uMb2jOeuXCBRbcYz5rolNNpStiFRvz3wsmsJAOhrFjnjMtB7Ji9yK8IkGx00nXaN4nsX'); 
 				stripe.redirectToCheckout({ sessionId: sessionId }).then(function(result) {
 					if (result.error) {alert(result.error.message);
 					}

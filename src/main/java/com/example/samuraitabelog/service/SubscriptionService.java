@@ -16,6 +16,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.Event;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.StripeObject;
 import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
@@ -32,12 +33,16 @@ public class SubscriptionService {
 	@Autowired
 	private final UserRepository userRepository ;
 	@Autowired
+	private final UserService userService;
+	@Autowired
 	private RoleRepository roleRepository;
 	private final HttpServletRequest httpServletRequest;
 	
 	// application.properties から読み込む
 	@Value("${stripe.api-key}")
     private String stripeApiKey;
+	 
+	
 	
 	// サービスクラスが最初に使われたときに一回だけ自動でAPIキーの登録する
 	@PostConstruct
@@ -46,24 +51,36 @@ public class SubscriptionService {
 	}
 	
 	// コンストラクタ
-	public SubscriptionService (UserRepository userRepository,RoleRepository roleRepository, HttpServletRequest httpServletRequest) {
+	public SubscriptionService (UserRepository userRepository, UserService userService, RoleRepository roleRepository, HttpServletRequest httpServletRequest) {
 		this.userRepository = userRepository;
+		this.userService = userService;
 		this.roleRepository = roleRepository;
 		this.httpServletRequest = httpServletRequest;
 	}
 	
 	// Checkout セッションを作成
 	public String createStripeSession(User user) {
+		// DBからcustomerIdを取得
 		String customerId =user.getStripeCustomerId();
-		String requestUrl = httpServletRequest.getRequestURL().toString();
 		
-		// 顧客IDが存在しない場合
+		if (customerId != null && !customerId.isEmpty()) {
+			try {
+				Customer.retrieve(customerId);
+			} catch (Exception e) {
+				user.setStripeCustomerId(null);
+				userRepository.save(user);
+				customerId = null;
+			}
+		}
+		
+		// 顧客IDが存在しない場合新規作成
 		if (customerId == null || customerId.isEmpty()) {
 				try {
 				// 新しいStripe顧客を作成
 				Customer customer = Customer.create(
 						CustomerCreateParams.builder()
 						.setEmail(user.getEmail())
+						.putMetadata("user_id", String.valueOf(user.getId())) 
 						.build());
 
 				// 新しく作成された顧客IDを取得
@@ -77,9 +94,8 @@ public class SubscriptionService {
 					return "";
 				}
 		}
-		
 							
-		
+		// Checkout セッションのパラメータ作成
 		SessionCreateParams params = SessionCreateParams.builder()
 				// モードをサブスクリプションを選択
 				.setMode(SessionCreateParams.Mode.SUBSCRIPTION)
@@ -93,30 +109,30 @@ public class SubscriptionService {
 				.addLineItem(
 						SessionCreateParams.LineItem.builder()
 						.setQuantity(1L)
-						.setPrice("price_1RN5JjIc44qIhXiA05JsVeO7")
+						.setPrice("price_1RPUhbRSOota6fUsLrSYQ1Pu")
 						.build()
 				)
 				.build();
 		
-		try {
-			
-					
+		try {	
 			// Stripeにセッション作成リクエストして、作成されたセッションのIDを返す
 			Session session = Session.create(params);
+			System.out.println("Created Stripe Session ID: " + session.getId()); 
 			return session.getId();
 			// エラー時にエラー内容をコンソール表示
-		} catch (StripeException e) {
+		} catch (Exception e) {
 			// 画面にはエラー内容を見えないように
 			e.printStackTrace();
 			return "";
 		}
 	}
-	
+
 	// Checkout完了の通知を受けたときに、その顧客をアプリ側で「プレミアム会員」にする
 	public void processSessionCompleted(Event event) {
 		System.out.println("Webhook受信: checkout.session.completed");
 		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
-        optionalStripeObject.ifPresentOrElse(stripeObject -> {
+        
+		optionalStripeObject.ifPresentOrElse(stripeObject -> {
             Session session = (Session)stripeObject;
             System.out.println("セッション取得成功");
 
@@ -126,11 +142,18 @@ public class SubscriptionService {
                 session = Session.retrieve(session.getId(), params, null);
                 System.out.println("セッション詳細取得成功");
                 
+                // Stripe のメタデータはPaymentIntent に紐づいてる。
+                PaymentIntent paymentIntent = (PaymentIntent) session.getPaymentIntentObject(); 
                 // 支払い情報から user_id を取得
-                Map<String, String> paymentIntentObject = session.getPaymentIntentObject().getMetadata();
-                String userId = paymentIntentObject.get("user_id");
-                
+                Map<String, String> metadata = session.getMetadata();
+                String userId = metadata.get("user_id");
                 System.out.println("user_id取得: " + userId);
+                
+                if(userId == null || userId.isEmpty()) {
+                	System.out.println("user_idがmetadataにありません。処理を中断します。");
+                	return;
+                }
+                
                 
                 // user_id をもとに User をDBから取得
                 User user = userRepository.findById(Integer.valueOf(userId)).orElseThrow(() -> new RuntimeException("User not found"));
@@ -140,19 +163,17 @@ public class SubscriptionService {
                 Role premiumRole = roleRepository.findByName("ROLE_PREMIUM").orElseThrow(() -> new RuntimeException("Role 'ROLE_PREMIUM' not found"));
                 		
                 // ユーザーのロールを更新
-                user.setRole(premiumRole);
-                userRepository.save(user);
+                User updatedUser = userService.updateUserRoleToPremium(user);       
                 System.out.println("ユーザーのロールをプレミアムに更新しました");
-                httpServletRequest.getSession().setAttribute("user", user);
                 
-            } catch (StripeException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("エラー発生: " + e.getMessage());
             }
-            System.out.println("予約一覧ページの登録処理が成功しました。");
+            System.out.println("Stripeの登録処理が成功しました。");
             
         },() -> {
-            System.out.println("予約一覧ページの登録処理が失敗しました。");
+            System.out.println("Stripeの登録処理が失敗しました。");
         });
 	}
 	
@@ -213,7 +234,7 @@ public class SubscriptionService {
 				Session session = Session.create(params);
 				System.out.println("Session ID: " + session.getId());
 				return session.getId();
-			} catch (StripeException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null; 
 		}

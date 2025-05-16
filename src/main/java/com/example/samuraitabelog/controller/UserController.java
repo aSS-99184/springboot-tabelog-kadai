@@ -34,7 +34,12 @@ public class UserController {
     
     @GetMapping
     public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {         
-        User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());  
+    	if (userDetailsImpl == null) {
+    		return "redirect:/auth/login";
+    	}
+    	
+    	
+    	User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());  
         
         model.addAttribute("user", user);
         
@@ -66,14 +71,14 @@ public class UserController {
         userService.update(userEditForm);
         redirectAttributes.addFlashAttribute("successMessage", "会員情報を編集しました。");
         
-        return "redirect:/user";
+        return "redirect:/index";
     }   
     
     // パスワード再設定画面を表示する
     @GetMapping("/password/reset")
     public String showResetPassword(Model model) {
         model.addAttribute("passwordEditForm", new PasswordEditForm());
-        return "user/password_reset";
+        return "password/password_reset";
     }
     
     // パスワード再設定を実行する
@@ -87,13 +92,13 @@ public class UserController {
     	
     	// エラーがあれば、もう一度パスワード再設定画面に戻す
     	if (bindingResult.hasErrors()) {
-            return "user/password_reset";
+            return "password/password_reset";
     	}
     	
     	User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
     	userService.newpassword(passwordEditForm, user);
-    	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。");
-    	return "redirect:/user";
+    	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。新しいパスワードでログインしてください。");
+    	return "redirect:/auth/login";
     }
     
     // 無料会員退会

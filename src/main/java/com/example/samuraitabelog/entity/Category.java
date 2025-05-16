@@ -16,15 +16,18 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Entity
 @Table(name = "categories")
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
+	@EqualsAndHashCode.Include
 	private Integer id;
 	
 	@Column(name = "name")
@@ -55,8 +58,4 @@ public class Category {
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-	
-	
-	
-
 }

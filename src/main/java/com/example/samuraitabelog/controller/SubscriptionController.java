@@ -3,7 +3,9 @@ package com.example.samuraitabelog.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +44,7 @@ public class SubscriptionController {
 
 	// 有料会員登録ページを表示
 	@GetMapping("/premium")
-	public String showPremiumPage(@RequestParam(required = false) String status, Model model) {
-		model.addAttribute("status", status);
+	public String showPremiumPage(@RequestParam(required = false) String status) {
 		return "subscription/premium";
 	}
 	
@@ -59,21 +60,13 @@ public class SubscriptionController {
 		}
 		
 		try {
-			 // UserServiceを使ってユーザーをPREMIUMに更新
-			userService.updateUserRoleToPremium(user);
-			// DBからPREMIUMに更新されたデータを取得
-			User updatedUser = userRepository.findById(user.getId()).orElseThrow();			
-			// userDetailsImpl を上書き
-			userDetailsImpl.updateUserRole(updatedUser);
-			
 			// Stripe セッションを作成
-			String sessionId = subscriptionService.createStripeSession(updatedUser);
+			String sessionId = subscriptionService.createStripeSession(user);
 			// セッションIDをモデルに追加
 			model.addAttribute("sessionId", sessionId);	
 			// Stripe 公開鍵をモデルに追加
-			model.addAttribute("stripePublicKey", stripePublicKey);
-			// ユーザーのロールがプレミアムに更新され、Stripe セッションが作成された後、プレミアム会員登録成功メッセージ
-			model.addAttribute("status", "success");
+			model.addAttribute("stripePublicKey", stripePublicKey);		
+
 			
 		// エラーが発生した場合
 		} catch (Exception e) {
@@ -137,7 +130,12 @@ public class SubscriptionController {
 			// Stripeでのサブスクリプションをキャンセル
 			subscriptionService.cancelStripe(user.getId());
 			// UserServiceを使ってユーザーのロールを戻す
-			userService.updateUserRoleToGeneral(user);
+			User updatedUser = userService.updateUserRoleToGeneral(user);
+			// userDetailsImpl を上書き
+			UserDetailsImpl updatedDetails = userDetailsImpl.updateUserRole(updatedUser);
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(updatedDetails,null,updatedDetails.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			
 			return "redirect:/subscription/cancel?status=done";
 	
 		} catch (Exception e) {

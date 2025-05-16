@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.example.samuraitabelog.service.SubscriptionService;
-import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
@@ -30,7 +29,9 @@ public class StripeWebhookController {
 
     @PostMapping("/stripe/webhook")
     public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
-        Stripe.apiKey = stripeApiKey;
+    	System.out.println("Webhook受信: checkout.session.completed");
+    	
+    	// Stripe.apiKey = stripeApiKey;
         Event event = null;
 
         try {

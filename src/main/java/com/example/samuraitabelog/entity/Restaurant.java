@@ -17,15 +17,18 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Entity
 @Table(name = "restaurants")
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Restaurant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "restaurant_id")
+	@EqualsAndHashCode.Include
 	private Integer id;
 	
 	@Column(name = "name")
@@ -84,6 +87,7 @@ public class Restaurant {
 	// Categoryを除外
 	 @ToString.Exclude 
 	private Set<Category> category  = new HashSet<>();
+	
 	
 	
 	// 今回は新着順表示で要る

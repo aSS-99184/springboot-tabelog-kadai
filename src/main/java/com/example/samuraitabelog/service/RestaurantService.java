@@ -90,17 +90,16 @@ public class RestaurantService {
 		restaurant.setPhoneNumber(restaurantEditForm.getPhoneNumber());
 		restaurant.setCloseDays(restaurantEditForm.getCloseDays());
 		restaurant.setPostalCode(restaurantEditForm.getPostalCode());
-		// 重複なしのリストを用意
-		Set<Category> categorySet = new HashSet<>();
+		
+		// 現在のカテゴリをいったんクリア
+		restaurant.getCategory().clear(); 
+
 		// restaurantEditForm.getCategoryIds() からカテゴリIDのリストを受け取る。カテゴリがnullじゃなくて、かつ空じゃないなら
 		if (restaurantEditForm.getCategoryIds() != null && !restaurantEditForm.getCategoryIds().isEmpty()) {
 			// Category エンティティをDBからまとめて取得して
 			List<Category> categoryList = categoryRepository.findAllById(restaurantEditForm.getCategoryIds());
-			categorySet.addAll(categoryList); 
+			restaurant.getCategory().addAll(categoryList); 
 		}
-		// 取得したカテゴリを Set<Category> にセット
-		restaurant.setCategory(categorySet);
-		
 		restaurantRepository.save(restaurant);
 		
 	}

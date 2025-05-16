@@ -44,8 +44,8 @@ public class AuthController {
  
     }
 	
-	@GetMapping("/login")
-	public String login() {
+	@GetMapping("/auth/login")
+	public String login(Model model) {
 			return "auth/login";
 	}
 	
@@ -88,7 +88,7 @@ public class AuthController {
         if (verificationToken != null) {
             User user = verificationToken.getUser();  
             userService.enableUser(user);
-            String successMessage = "会員登録が完了しました。ログインしてください。";
+            String successMessage = "会員登録が完了しました。登録したメールアドレスとパスワードでログインしてください。";
             model.addAttribute("successMessage", successMessage);            
         } else {
             String errorMessage = "認証に失敗しました。もう一度登録をお願いします。";
@@ -193,7 +193,7 @@ public class AuthController {
     	passwordResetTokenService.delete(resetToken);
 
     	// 成功メッセージ
-    	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。ログインしてください。");
+    	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。新しいパスワードでログインしてください。");
     	
     	return "redirect:/auth/login";
     }

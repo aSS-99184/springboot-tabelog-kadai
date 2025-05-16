@@ -1,6 +1,4 @@
 
-
-
 package com.example.samuraitabelog.controller;
 
 import java.util.List;
@@ -13,7 +11,6 @@ import com.example.samuraitabelog.entity.Category;
 import com.example.samuraitabelog.entity.Restaurant;
 import com.example.samuraitabelog.repository.CategoryRepository;
 import com.example.samuraitabelog.repository.RestaurantRepository;
-
 @Controller
 public class HomeController {
 	private final RestaurantRepository restaurantRepository;

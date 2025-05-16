@@ -68,9 +68,12 @@
 							<h2 class="text-center mb-3">カテゴリから探す</h2>
 							<div class="container mb-3">
 							    <div class="d-flex flex-wrap justify-content-center">
-							        <div class="col" th:each="category : ${categories}">							        
-						                <input type="hidden" name="category" th:value="${category.name}">
-						                <button type="submit" class="btn mx-3 mb-1 category-btn" style="color: #f77736; white-space: nowrap;" th:text="${category.name}"></button>           
+									<!-- カテゴリのIDをURLに含めて送信 -->
+							        <div class="col" th:each="category : ${categories}">
+										<form th:action="@{/restaurants}" method="get">							        
+							                <input type="hidden" name="category" th:value="${category.name}">
+							                <button type="submit" class="btn mx-3 mb-1 category-btn" style="color: #f77736; white-space: nowrap;" th:text="${category.name}"></button>           
+										</form>
 							        </div>
 							    </div>
 							</div>

@@ -1,8 +1,10 @@
 package com.example.samuraitabelog.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.samuraitabelog.entity.User;
@@ -56,7 +58,9 @@ public class UserDetailsImpl implements UserDetails {
 	 }
 	 
 	 public UserDetailsImpl updateUserRole(User updatedUser){
-		 return  new UserDetailsImpl(updatedUser, this.authorities);
+		 Collection<GrantedAuthority> updatedAuthorities = new ArrayList<>();
+		 updatedAuthorities.add(new SimpleGrantedAuthority(updatedUser.getRole().getName()));
+		 return  new UserDetailsImpl(updatedUser, updatedAuthorities);
 	 }
 
 }
