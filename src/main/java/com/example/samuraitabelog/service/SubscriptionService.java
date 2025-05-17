@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.example.samuraitabelog.entity.Role;
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.repository.RoleRepository;
 import com.example.samuraitabelog.repository.UserRepository;
@@ -153,18 +152,21 @@ public class SubscriptionService {
                 	System.out.println("user_idがmetadataにありません。処理を中断します。");
                 	return;
                 }
-                
-                
+
                 // user_id をもとに User をDBから取得
-                User user = userRepository.findById(Integer.valueOf(userId)).orElseThrow(() -> new RuntimeException("User not found"));
+                User user = userRepository.findById(Integer.valueOf(userId)).orElse(null);
+                if (user == null) {	
+                	System.out.println("指定された user_id は存在しません: " + userId);
+                	return;
+                }
+                
+                String customerId = session.getCustomer();
+        		user.setStripeCustomerId(customerId);       
                 
                 
-                // そのユーザーのロールを "ROLE_PREMIUM" に変えて save()する。プレミアムロールを取得。
-                Role premiumRole = roleRepository.findByName("ROLE_PREMIUM").orElseThrow(() -> new RuntimeException("Role 'ROLE_PREMIUM' not found"));
-                		
                 // ユーザーのロールを更新
-                User updatedUser = userService.updateUserRoleToPremium(user);       
-                System.out.println("ユーザーのロールをプレミアムに更新しました");
+        		userService.updateUserRoleToPremium(user);       
+                System.out.println("ユーザーのロールをプレミアムに更新しました" + user.getRole().getName());
                 
             } catch (Exception e) {
                 e.printStackTrace();

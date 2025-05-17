@@ -42,6 +42,7 @@ public class StripeWebhookController {
 
         //  Stripe の checkout.session.completed イベントを受け取って、subscriptionService.processSessionCompleted(event); に処理を任せる。
         if ("checkout.session.completed".equals(event.getType())) {
+        	System.out.println("Webhook受信: checkout.session.completed");
         	subscriptionService.processSessionCompleted(event);
         }
 

@@ -146,8 +146,7 @@ public class UserService {
 	// 有料会員登録
 	@Transactional
 	public User updateUserRoleToPremium(User user) {
-		Role premiumRole = roleRepository.findByName("ROLE_PREMIUM")
-				.orElseThrow(() -> new RuntimeException("Role 'ROLE_PREMIUM' not found"));
+		Role premiumRole = roleRepository.findByName("ROLE_PREMIUM").orElseThrow(() -> new RuntimeException("ROLE_PREMIUMが見つかりません"));
 		// ユーザーのロールを "ROLE_PREMIUM" に設定
 		user.setRole(premiumRole);
 		return userRepository.save(user);
