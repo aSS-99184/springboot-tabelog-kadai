@@ -6,6 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.service.PasswordResetTokenService;
@@ -21,6 +22,7 @@ public class PasswordResetEventListener {
     }
 
 	@EventListener
+	@Transactional 
 	public void onPasswordResetEvent(PasswordResetEvent passwordResetEvent) {
 	    User user = passwordResetEvent.getUser();
 	    String token = UUID.randomUUID().toString();

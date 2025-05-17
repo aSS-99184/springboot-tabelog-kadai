@@ -21,17 +21,17 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests((requests) -> requests
 				// すべてのユーザーにアクセスを許可するURL
-				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium","/password/password_reset_request").permitAll() 
+				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium","/auth/verify").permitAll()
+				.requestMatchers(HttpMethod.POST, "/password/password_reset", "/password/password_reset/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset", "/password/password_reset/**").permitAll()
 				// 管理者にアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				// 無料会員にのみアクセスを許可するURL
 				.requestMatchers("/subscription/premium", "/create-checkout-session").hasRole("GENERAL")
 				// 有料会員にのみアクセスを許可するURL
-				.requestMatchers("/subscription/payment", "/subscription/update-card-session", "/subscription/cancel").hasRole("PREMIUM")
+				.requestMatchers("/subscription/payment", "/subscription/update-card-session").hasRole("PREMIUM")
 				// 無料＆有料会員にアクセス許可
-				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription").authenticated()
-				// 無料会員、有料会員、管理者にアクセス許可
-				.requestMatchers( "/password/password_reset_request/**", "/password/password_reset", "/password/password_reset/**").hasAnyRole("GENERAL", "PREMIUM", "ADMIN")
+				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription", "/subscription/cancel").hasAnyRole("ADMIN", "MODERATOR")
 				
 				// 上記以外はログインが必要
 				.anyRequest().authenticated()

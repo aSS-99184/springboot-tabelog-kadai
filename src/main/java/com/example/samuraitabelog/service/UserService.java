@@ -147,7 +147,7 @@ public class UserService {
 	@Transactional
 	public User updateUserRoleToPremium(User user) {
 		Role premiumRole = roleRepository.findByName("ROLE_PREMIUM").orElseThrow(() -> new RuntimeException("ROLE_PREMIUMが見つかりません"));
-		// ユーザーのロールを "ROLE_PREMIUM" に設定
+		// ユーザーのロールを "ROLE_PREMIUM" に設定して、DBに保存する。
 		user.setRole(premiumRole);
 		return userRepository.save(user);
 	}
@@ -162,6 +162,7 @@ public class UserService {
 		return userRepository.save(user); 
 	}
 	
+	// パスワードリセット
 	public void sendPasswordResetEmail(User user, String requestUrl) {
 		passwordResetEventPublisher.publishPasswordResetEvent(user, requestUrl);
 	}

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +15,12 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
 import com.stripe.model.StripeObject;
 import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.PaymentMethodAttachParams;
 import com.stripe.param.SubscriptionListParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
@@ -29,26 +30,21 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class SubscriptionService {
-	@Autowired
 	private final UserRepository userRepository ;
-	@Autowired
 	private final UserService userService;
-	@Autowired
-	private RoleRepository roleRepository;
+	private final RoleRepository roleRepository;
 	private final HttpServletRequest httpServletRequest;
 	
 	// application.properties から読み込む
 	@Value("${stripe.api-key}")
     private String stripeApiKey;
 	 
-	
-	
 	// サービスクラスが最初に使われたときに一回だけ自動でAPIキーの登録する
 	@PostConstruct
 	public void init() {
 		Stripe.apiKey = stripeApiKey;
 	}
-	
+
 	// コンストラクタ
 	public SubscriptionService (UserRepository userRepository, UserService userService, RoleRepository roleRepository, HttpServletRequest httpServletRequest) {
 		this.userRepository = userRepository;
@@ -128,6 +124,7 @@ public class SubscriptionService {
 
 	// Checkout完了の通知を受けたときに、その顧客をアプリ側で「プレミアム会員」にする
 	public void processSessionCompleted(Event event) {
+		
 		System.out.println("Webhook受信: checkout.session.completed");
 		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
         
@@ -142,7 +139,34 @@ public class SubscriptionService {
                 System.out.println("セッション詳細取得成功");
                 
                 // Stripe のメタデータはPaymentIntent に紐づいてる。
-                PaymentIntent paymentIntent = (PaymentIntent) session.getPaymentIntentObject(); 
+                PaymentIntent paymentIntent = (PaymentIntent) session.getPaymentIntentObject();
+                if (paymentIntent != null) {
+                    String paymentMethodId = paymentIntent.getPaymentMethod();
+                   
+                } else {
+                    System.out.println("PaymentIntentがnullです。");
+                }
+                
+                
+                // 支払い情報から paymentMethodId を取得
+                String paymentMethodId = paymentIntent.getPaymentMethod();
+                System.out.println("取得した paymentMethodId: " + paymentMethodId);
+                
+                // 支払い方法が null でないかチェック
+                if (paymentMethodId != null && !paymentMethodId.isEmpty()) {
+                	try {
+                        PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
+                        paymentMethod.attach(PaymentMethodAttachParams.builder().setCustomer(session.getCustomer()).build());
+                        System.out.println("支払い方法を顧客にアタッチしました");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("支払い方法のアタッチに失敗しました: " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("paymentMethodId が null または空です。");
+                    return;
+                }
+                
                 // 支払い情報から user_id を取得
                 Map<String, String> metadata = session.getMetadata();
                 String userId = metadata.get("user_id");
@@ -159,11 +183,11 @@ public class SubscriptionService {
                 	System.out.println("指定された user_id は存在しません: " + userId);
                 	return;
                 }
-                
+
+                // セッションから顧客IDを取得
                 String customerId = session.getCustomer();
         		user.setStripeCustomerId(customerId);       
-                
-                
+        
                 // ユーザーのロールを更新
         		userService.updateUserRoleToPremium(user);       
                 System.out.println("ユーザーのロールをプレミアムに更新しました" + user.getRole().getName());
@@ -178,6 +202,9 @@ public class SubscriptionService {
             System.out.println("Stripeの登録処理が失敗しました。");
         });
 	}
+	
+	
+	
 	
 	// 有料会員解約
 	public void cancelStripe(Integer userId) throws StripeException {

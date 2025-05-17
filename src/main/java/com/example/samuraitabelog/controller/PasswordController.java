@@ -40,7 +40,7 @@ public class PasswordController {
 	}
 	
 	// 2.リセット用のリンクをユーザーに送信する
-    @PostMapping("password_reset_request")
+    @PostMapping("/password_reset_request")
     public String processPasswordResetRequest(@ModelAttribute @Validated PasswordRequestForm passwordRequestForm,BindingResult bindingResult, Model model,  HttpServletRequest httpServletRequest) {	
     	
     	// 入力されたメールアドレスが登録されていなければエラー表示
@@ -63,16 +63,14 @@ public class PasswordController {
         
         // イベントを発行してリセットメールを送信
         userService.sendPasswordResetEmail(user, requestUrl);
-        PasswordEditForm passwordEditForm = new PasswordEditForm(); 
-        
+    
     	model.addAttribute("successMessage", "パスワード再設定用のリンクをメールで送信しました。メールの内容に沿って操作してください。");
-    	model.addAttribute("passwordEditForm", new PasswordEditForm());
     	
     	return "auth/verify";
     }
     
     // 3.パスワードを再設定するページを表示する
-    @GetMapping("password_reset")
+    @GetMapping("/password_reset")
     public String showPasswordResetForm(@RequestParam(name = "token") String token, Model model,RedirectAttributes redirectAttributes) {
     
     	if (token == null) {
@@ -82,7 +80,7 @@ public class PasswordController {
     	
     	PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
     	if (resetToken == null) {
-    		redirectAttributes.addFlashAttribute("errorMessage", "このリンクは無効です。メールアドレス入力画面から再度お試しください。");
+    		redirectAttributes.addFlashAttribute("errorMessage", "このリンクは無効です。");
     		return "redirect:/password/password_reset_request";
     	}
     	

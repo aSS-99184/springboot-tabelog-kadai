@@ -10,4 +10,5 @@ import com.example.samuraitabelog.entity.User;
 public interface ReservationRepository extends JpaRepository<Reservation, Integer>{
 	public Page<Reservation> findByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 	public void deleteByUserId(Integer userId);
+	public void deleteById(Integer reservationId);
 }

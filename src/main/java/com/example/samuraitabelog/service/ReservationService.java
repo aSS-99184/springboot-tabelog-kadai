@@ -40,4 +40,10 @@ public class ReservationService {
     	
     	reservationRepository.save(reservation);    	
     }
+    
+    // 予約削除
+    @Transactional
+	public void deleteReservation(Integer reservationId) {
+		reservationRepository.deleteById(reservationId);
+	}
 }

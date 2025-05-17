@@ -26,23 +26,29 @@ public class StripeWebhookController {
     public StripeWebhookController(SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
     }
-
+    
+    // Stripe からの Webhook リクエストを受け取るエンドポイント
     @PostMapping("/stripe/webhook")
     public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
     	System.out.println("Webhook受信: checkout.session.completed");
+    	System.out.println("Webhook 受信: " + payload);
     	
     	// Stripe.apiKey = stripeApiKey;
         Event event = null;
 
         try {
+        	// イベントの検証
             event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
         } catch (SignatureVerificationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
+        // イベントが checkout.session.completed タイプ
         //  Stripe の checkout.session.completed イベントを受け取って、subscriptionService.processSessionCompleted(event); に処理を任せる。
+        // ユーザーが支払いを完了したときに Stripe が送信する
         if ("checkout.session.completed".equals(event.getType())) {
         	System.out.println("Webhook受信: checkout.session.completed");
+        	// subscriptionService.processSessionCompleted(event);が呼ばれて支払い後の処理ユーザーのロール変更
         	subscriptionService.processSessionCompleted(event);
         }
 

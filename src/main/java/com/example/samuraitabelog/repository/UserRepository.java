@@ -12,4 +12,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	public User findByEmail(String email);
 	// 会員一覧ページ　氏名・フリガナ検索
 	public Page<User> findByNameLikeOrFuriganaLike(String nameKeyword, String furiganaKeyword, Pageable pageable);
+	
+	// StripeCustomerId を更新
+	public User findByStripeCustomerId(String stripeCustomerId);
 }

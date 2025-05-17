@@ -119,6 +119,7 @@ public class SubscriptionController {
 	}
 	
 	// 解約処理を実行
+	@PreAuthorize("hasRole('PREMIUM')")
 	@PostMapping("/cancel-subscription")
 	public String cancelSubscription(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 		User user = userDetailsImpl.getUser();

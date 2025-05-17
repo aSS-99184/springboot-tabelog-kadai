@@ -1,6 +1,8 @@
 package com.example.samuraitabelog.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,9 @@ import com.example.samuraitabelog.form.UserEditForm;
 import com.example.samuraitabelog.repository.UserRepository;
 import com.example.samuraitabelog.security.UserDetailsImpl;
 import com.example.samuraitabelog.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/user")
@@ -70,25 +75,28 @@ public class UserController {
         userService.update(userEditForm);
         redirectAttributes.addFlashAttribute("successMessage", "会員情報を編集しました。");
         
-        return "redirect:/index";
+        return "redirect:/user";
     }   
     
     
     
     // 無料会員退会
     @PostMapping("/delete")
-    public String deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, RedirectAttributes redirectAttributes) {
-    	// ユーザー情報を取得
-    	Integer userId = userDetailsImpl.getUser().getId();
-    	userService.deleteAccount(userId);
-
+    public String deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, RedirectAttributes redirectAttributes,HttpServletRequest request, HttpServletResponse response) {
     	try {
-    	redirectAttributes.addFlashAttribute("successMessage", "会員情報を削除しました。再度利用したい場合は、会員登録を行ってください。");
-    	return "redirect:/login?logout";
+    		// ユーザー情報を取得
+    		Integer userId = userDetailsImpl.getUser().getId();
+        	userService.deleteAccount(userId);
+        	// ログアウト処理（認証情報クリア）	
+        	SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+        	logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        	
+	    	redirectAttributes.addFlashAttribute("successMessage", "会員情報を削除しました。再度利用したい場合は、会員登録を行ってください。");
+	    	return "redirect:/login?logout";
     	
     	} catch (Exception e) {
     		redirectAttributes.addFlashAttribute("errorMessage", "退会処理中にエラーが発生しました。");
-    		return "redirect:/user";
+    		return "redirect:/index";
     	}
     }
 }

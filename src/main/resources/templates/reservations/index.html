@@ -37,6 +37,8 @@
 										<th scope="col">飲食店名</th>
 										<th scope="col">来店日時</th>
 										<th scope="col">人数</th>
+										<th scope="col"></th>
+										
 									</tr>
 								</thead>
 								<tbody>
@@ -45,7 +47,27 @@
 											<a th:href="@{/restaurants/__${reservation.restaurant.id}__}" th:text="${reservation.restaurant.name}"></a>
 										</td>
 										<td th:text="${#temporals.format(reservation.reservedDatetime, 'yyyy年M月d日 HH:mm')}"></td>
-										<td th:text="${reservation.guestCount + '名'}"></td>								
+										<td th:text="${reservation.guestCount + '名'}"></td>
+										<!-- 予約削除 -->
+										<td><a href="#" class="samuraitabelog-link-danger delete-link" data-bs-toggle="modal" th:data-bs-target="${'#deleteReservationModalLabel' + reservation.id}">キャンセル</a></td>
+										
+										<!-- 予約削除モーダル -->
+										<div class="modal fade" th:id="${'deleteReservationModalLabel' + reservation.id}"tabindex="-1" th:aria-labelledby="${'deleteReservationModalLabel' + reservation.id}">										
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" th:id="${'deleteReservationModalLabel' + reservation.id}" th:text="${reservation.restaurant.name} + 'の予約をキャンセルしてもよろしいですか？'"></h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>														
+													</div>
+													<div class="modal-footer">
+														<form method="post" th:action="@{/restaurants/{restaurantId}/reservations/{reservationId}/delete(restaurantId=${reservation.restaurant.id}, reservationId=${reservation.id})}">
+															<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+															<button type="submit" class="btn samuraitabelog-btn-danger text-white shadow-sm">予約キャンセル確定</button>
+														</form>
+													</div>
+												</div>
+											</div>							
+										</div>
 									</tr>
 								</tbody>
 							</table>
