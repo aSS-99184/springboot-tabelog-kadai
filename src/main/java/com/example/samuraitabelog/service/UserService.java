@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.samuraitabelog.entity.PasswordResetToken;
 import com.example.samuraitabelog.entity.Role;
 import com.example.samuraitabelog.entity.User;
+import com.example.samuraitabelog.event.PasswordResetEventPublisher;
 import com.example.samuraitabelog.form.PasswordEditForm;
 import com.example.samuraitabelog.form.SignupForm;
 import com.example.samuraitabelog.form.UserEditForm;
@@ -28,8 +29,9 @@ public class UserService {
 	private final ReviewRepository reviewRepository;
 	private final ReservationRepository reservationRepository;
 	private final FavoriteRepository favoriteRepository;
+	private final PasswordResetEventPublisher passwordResetEventPublisher;
 	
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, VerificationTokenRepository verificationTokenRepository, ReviewRepository reviewRepository, ReservationRepository reservationRepository, FavoriteRepository favoriteRepository) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository passwordResetTokenRepository, VerificationTokenRepository verificationTokenRepository, ReviewRepository reviewRepository, ReservationRepository reservationRepository, FavoriteRepository favoriteRepository, PasswordResetEventPublisher passwordResetEventPublisher) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
@@ -38,6 +40,7 @@ public class UserService {
 		this.reviewRepository = reviewRepository;
 		this.reservationRepository = reservationRepository;
 		this.favoriteRepository = favoriteRepository;
+		this.passwordResetEventPublisher = passwordResetEventPublisher;
 	}
 	
 	@Transactional
@@ -160,8 +163,7 @@ public class UserService {
 		return userRepository.save(user); 
 	}
 	
-	
-	
-	
-	
+	public void sendPasswordResetEmail(User user, String requestUrl) {
+		passwordResetEventPublisher.publishPasswordResetEvent(user, requestUrl);
+	}
 }

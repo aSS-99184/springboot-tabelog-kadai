@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.samuraitabelog.entity.User;
-import com.example.samuraitabelog.form.PasswordEditForm;
 import com.example.samuraitabelog.form.UserEditForm;
 import com.example.samuraitabelog.repository.UserRepository;
 import com.example.samuraitabelog.security.UserDetailsImpl;
@@ -74,32 +73,7 @@ public class UserController {
         return "redirect:/index";
     }   
     
-    // パスワード再設定画面を表示する
-    @GetMapping("/password/reset")
-    public String showResetPassword(Model model) {
-        model.addAttribute("passwordEditForm", new PasswordEditForm());
-        return "password/password_reset";
-    }
     
-    // パスワード再設定を実行する
-    @PostMapping("/password/reset")
-    public String resetPassword(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,@ModelAttribute @Validated PasswordEditForm passwordEditForm,BindingResult bindingResult,RedirectAttributes redirectAttributes) {
-    	
-    	// パスワードと確認用パスワードが違ったらエラー
-    	if (!passwordEditForm.getPassword().equals(passwordEditForm.getPasswordConfirm())) {
-    		bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "パスワードが一致しません。");
-    	}
-    	
-    	// エラーがあれば、もう一度パスワード再設定画面に戻す
-    	if (bindingResult.hasErrors()) {
-            return "password/password_reset";
-    	}
-    	
-    	User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
-    	userService.newpassword(passwordEditForm, user);
-    	redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました。新しいパスワードでログインしてください。");
-    	return "redirect:/auth/login";
-    }
     
     // 無料会員退会
     @PostMapping("/delete")

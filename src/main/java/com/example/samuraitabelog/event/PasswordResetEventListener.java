@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.example.samuraitabelog.entity.User;
 import com.example.samuraitabelog.service.PasswordResetTokenService;
-
 // PasswordResetEventからの通知を受けてパスワード再設定用のメールを送信する
 @Component
 public class PasswordResetEventListener {
@@ -22,7 +21,7 @@ public class PasswordResetEventListener {
     }
 
 	@EventListener
-	private void onPasswordResetEvent(PasswordResetEvent passwordResetEvent) {
+	public void onPasswordResetEvent(PasswordResetEvent passwordResetEvent) {
 	    User user = passwordResetEvent.getUser();
 	    String token = UUID.randomUUID().toString();
 	    passwordResetTokenService.create(user, token);

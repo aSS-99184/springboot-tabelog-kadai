@@ -21,7 +21,7 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests((requests) -> requests
 				// すべてのユーザーにアクセスを許可するURL
-				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset","/password/password_reset/**",   "/password/password_reset_message", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium").permitAll() 
+				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium","/password/password_reset_request").permitAll() 
 				// 管理者にアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				// 無料会員にのみアクセスを許可するURL
@@ -30,6 +30,8 @@ public class WebSecurityConfig {
 				.requestMatchers("/subscription/payment", "/subscription/update-card-session", "/subscription/cancel").hasRole("PREMIUM")
 				// 無料＆有料会員にアクセス許可
 				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription").authenticated()
+				// 無料会員、有料会員、管理者にアクセス許可
+				.requestMatchers( "/password/password_reset_request/**", "/password/password_reset", "/password/password_reset/**").hasAnyRole("GENERAL", "PREMIUM", "ADMIN")
 				
 				// 上記以外はログインが必要
 				.anyRequest().authenticated()
