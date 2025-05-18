@@ -102,14 +102,16 @@
                                    </div>
                                </div>
                            </div>
-                         <form method="post" action="/user/delete" onsubmit="return confirm('プレミアム会員の場合、レビュー・お気に入り・予約登録ができなくなります。本当に退会しますか？');">
-		                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-		                   <div class="form-group d-flex justify-content-end my-4">
-								<button type="submit" class="btn text-black  w-25" style="background-color: white; ">
-								 	退会する
-								</button>                                                                                   
-		               		</div>
-		               	</form>
+                           <div sec:authorize="!hasRole('PREMIUM')">
+	                         <form method="post" action="/user/delete" onsubmit="return confirm('再登録が必要になりますが本当に退会しますか？');">
+			                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+			                   <div class="form-group d-flex justify-content-end my-4">
+									<button type="submit" class="btn text-black  w-25" style="background-color: white; ">
+									 	退会する
+									</button>                                                                                   
+			               		</div>
+			               	</form>
+			              </div>
                    	</div>
                </div>
            </main>

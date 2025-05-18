@@ -146,9 +146,15 @@ public class UserService {
 	// 有料会員登録
 	@Transactional
 	public User updateUserRoleToPremium(User user) {
+		
+		// DBから最新のユーザー情報を取得
+		User managedUser = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
+		// ロールを取得
 		Role premiumRole = roleRepository.findByName("ROLE_PREMIUM").orElseThrow(() -> new RuntimeException("ROLE_PREMIUMが見つかりません"));
-		// ユーザーのロールを "ROLE_PREMIUM" に設定して、DBに保存する。
-		user.setRole(premiumRole);
+		
+		// ユーザーのロールを "ROLE_PREMIUM" に設定
+		managedUser.setRole(premiumRole);
+		// saveして変更をDBに反映
 		return userRepository.save(user);
 	}
 	
@@ -165,5 +171,12 @@ public class UserService {
 	// パスワードリセット
 	public void sendPasswordResetEmail(User user, String requestUrl) {
 		passwordResetEventPublisher.publishPasswordResetEvent(user, requestUrl);
+	}
+	
+	// stripeCustomerIdをセット
+	@Transactional
+	public void saveStripeCustomerId(User user, String stripeCustomerId) {
+		user.setStripeCustomerId(stripeCustomerId);
+		userRepository.save(user);
 	}
 }

@@ -21,9 +21,27 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests((requests) -> requests
 				// すべてのユーザーにアクセスを許可するURL
-				.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/restaurants", "/restaurants/{id}", "/stripe/webhook", "/restaurants/{id}/reviews", "/stripe/webhook", "/subscription/premium","/auth/verify").permitAll()
-				.requestMatchers(HttpMethod.POST, "/password/password_reset", "/password/password_reset/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/password/password_reset_request", "/password/password_reset_request/**", "/password/password_reset", "/password/password_reset/**").permitAll()
+					.requestMatchers(
+						    "/css/**",
+						    "/images/**",
+						    "/js/**",
+						    "/storage/**",
+						    "/",
+						    "/signup/**",
+						    "/restaurants",
+						    "/restaurants/{id}",
+						    "/stripe/webhook",
+						    "/restaurants/{id}/reviews",
+						    "/subscription/premium",
+						    "/auth/verify",
+						    "/password/password_reset",
+						    "/password/password_reset/**",
+						    "/password/password_reset_request",
+						    "/password/password_reset_request/**",
+						    "/password/password_reset_message"
+						).permitAll()
+				
+				
 				// 管理者にアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				// 無料会員にのみアクセスを許可するURL
@@ -31,7 +49,7 @@ public class WebSecurityConfig {
 				// 有料会員にのみアクセスを許可するURL
 				.requestMatchers("/subscription/payment", "/subscription/update-card-session").hasRole("PREMIUM")
 				// 無料＆有料会員にアクセス許可
-				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription", "/subscription/cancel").hasAnyRole("ADMIN", "MODERATOR")
+				.requestMatchers(HttpMethod.POST, "/subscription/cancel-subscription", "/subscription/cancel").authenticated()
 				
 				// 上記以外はログインが必要
 				.anyRequest().authenticated()
@@ -48,7 +66,10 @@ public class WebSecurityConfig {
 				.logoutSuccessUrl("/?loggedOut")
 				.permitAll()
 				)
-			.csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/stripe/webhook")));
+				//.csrf().ignoringRequestMatchers("/stripe/webhook");
+				 .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/stripe/webhook")));
+
+
 		return http.build();
 	}
 	

@@ -53,81 +53,32 @@ public class SubscriptionService {
 		this.httpServletRequest = httpServletRequest;
 	}
 	
-	// Checkout セッションを作成
-	public String createStripeSession(User user) {
-		// DBからcustomerIdを取得
-		String customerId =user.getStripeCustomerId();
-		
-		if (customerId != null && !customerId.isEmpty()) {
-			try {
-				Customer.retrieve(customerId);
-			} catch (Exception e) {
-				user.setStripeCustomerId(null);
-				userRepository.save(user);
-				customerId = null;
-			}
-		}
-		
-		// 顧客IDが存在しない場合新規作成
-		if (customerId == null || customerId.isEmpty()) {
-				try {
-				// 新しいStripe顧客を作成
-				Customer customer = Customer.create(
-						CustomerCreateParams.builder()
-						.setEmail(user.getEmail())
-						.putMetadata("user_id", String.valueOf(user.getId())) 
-						.build());
+	
+	// Stripeの顧客を作るメソッド
+		 public Customer createCustomer(User user) throws StripeException {
+		        CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
+		            .setName(user.getName())
+		            .setEmail(user.getEmail())
+		            .build();
 
-				// 新しく作成された顧客IDを取得
-				customerId = customer.getId();
-				// 顧客IDをユーザー情報に保存する処理
-				user.setStripeCustomerId(customerId);
-				userRepository.save(user);
-				} catch (StripeException e) {
-					// エラー処理
-					e.printStackTrace();
-					return "";
-				}
-		}
-							
-		// Checkout セッションのパラメータ作成
-		SessionCreateParams params = SessionCreateParams.builder()
-				// モードをサブスクリプションを選択
-				.setMode(SessionCreateParams.Mode.SUBSCRIPTION)
-				// ユーザーがサブスクリプションに成功したときに表示するページ
-				.setSuccessUrl("http://localhost:8080/subscription/premium?status=success")
-				// ユーザーが購入をキャンセルした時に表示するページ
-				.setCancelUrl("http://localhost:8080/subscription/premium?status=failed")
-				.setCustomer(customerId)
-				.putMetadata("user_id", String.valueOf(user.getId()))
-				// 商品定義
-				.addLineItem(
-						SessionCreateParams.LineItem.builder()
-						.setQuantity(1L)
-						.setPrice("price_1RPUhbRSOota6fUsLrSYQ1Pu")
-						.build()
-				)
-				.build();
-		
-		try {	
-			// Stripeにセッション作成リクエストして、作成されたセッションのIDを返す
-			Session session = Session.create(params);
-			System.out.println("Created Stripe Session ID: " + session.getId()); 
-			return session.getId();
-			// エラー時にエラー内容をコンソール表示
-		} catch (Exception e) {
-			// 画面にはエラー内容を見えないように
-			e.printStackTrace();
-			return "";
-		}
-	}
-
+		        return Customer.create(customerCreateParams);
+		    }
+	
 	// Checkout完了の通知を受けたときに、その顧客をアプリ側で「プレミアム会員」にする
 	public void processSessionCompleted(Event event) {
 		
 		System.out.println("Webhook受信: checkout.session.completed");
 		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
-        
+
+	    
+	    System.out.println("セッション取得成功");
+		
+		if (optionalStripeObject.isPresent()) {
+		    System.out.println("中身ある");
+		} else {
+		    System.out.println("optionalStripeObject は空");
+		}
+		
 		optionalStripeObject.ifPresentOrElse(stripeObject -> {
             Session session = (Session)stripeObject;
             System.out.println("セッション取得成功");
@@ -189,7 +140,7 @@ public class SubscriptionService {
         		user.setStripeCustomerId(customerId);       
         
                 // ユーザーのロールを更新
-        		userService.updateUserRoleToPremium(user);       
+        		User updatedUser = userService.updateUserRoleToPremium(user);       
                 System.out.println("ユーザーのロールをプレミアムに更新しました" + user.getRole().getName());
                 
             } catch (Exception e) {
@@ -245,24 +196,22 @@ public class SubscriptionService {
 		}
 		
 		String requestUrl = httpServletRequest.getRequestURL().toString();
-		System.out.println("Request URL: " + requestUrl); 
+		String baseUrl = requestUrl.replaceAll("/update-card-session", "");
 		
 			SessionCreateParams params = SessionCreateParams.builder()
 					.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
 					.setMode(SessionCreateParams.Mode.SETUP)
 					.setCustomer(stripeCustomerId)
 					// ユーザーがカード登録を完了したときに戻る場所
-					.setSuccessUrl("http://localhost:8080/subscription/payment?status=done")
+					.setSuccessUrl(baseUrl + "/subscription/payment?status=done")
 					// ユーザーが処理を途中でキャンセルしたときに戻る場所
-					.setCancelUrl("http://localhost:8080/subscription/payment?status=failed")
+					.setCancelUrl(baseUrl + "/subscription/payment?status=failed")
 					.build();
-			System.out.println("Success URL: " + "http://localhost:8080/subscription/payment?status=done");
-			System.out.println("Cancel URL: " + "http://localhost:8080/subscription/payment?status=failed");
 			
 			try {
 				Session session = Session.create(params);
-				System.out.println("Session ID: " + session.getId());
 				return session.getId();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null; 
