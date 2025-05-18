@@ -29,7 +29,9 @@ public class StripeWebhookController {
     
     // Stripe からの Webhook リクエストを受け取るエンドポイント
     @PostMapping("/stripe/webhook")
-    public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+    public ResponseEntity<String> webhook(@RequestBody String payload, 
+    									@RequestHeader("Stripe-Signature") 
+    									String sigHeader) {
     	System.out.println("Webhook受信: checkout.session.completed");
     	System.out.println("Webhook 受信: " + payload);
     	
@@ -40,16 +42,24 @@ public class StripeWebhookController {
         	// イベントの検証
             event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
         } catch (SignatureVerificationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
         }
 
         // イベントが checkout.session.completed タイプ
-        //  Stripe の checkout.session.completed イベントを受け取って、subscriptionService.processSessionCompleted(event); に処理を任せる。
+        //  Stripe の checkout.session.completed イベントを受け取って、
+        // subscriptionService.processSessionCompleted(event); に処理を任せる。
         // ユーザーが支払いを完了したときに Stripe が送信する
         if ("checkout.session.completed".equals(event.getType())) {
         	System.out.println("Webhook受信: checkout.session.completed");
+        	
+        	try {
         	// subscriptionService.processSessionCompleted(event);が呼ばれて支払い後の処理ユーザーのロール変更
         	subscriptionService.processSessionCompleted(event);
+        	return ResponseEntity.ok("Success"); 
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process event");
+        	}
         }
 
         return new ResponseEntity<>("Success", HttpStatus.OK);
